@@ -1,0 +1,4 @@
+{
+  "topic": "validate_result",
+  "bootstrapServer": "xxx:9092"
+}

@@ -1,0 +1,143 @@
+{
+  "table_name": "ods.ods_mp_wi_product_df",
+  "validators": [
+    {
+      "key":"is_soldout",
+      "operator": "in",
+      "value": ["0","1"]
+    },
+    {
+      "key": "product_status",
+      "operator": "in",
+      "value": [
+        "1",
+        "2",
+        "3"
+      ]
+    },
+    {
+      "key": "subscribe_notice_content_type",
+      "operator": "in",
+      "value": [
+        "0",
+        "1"
+      ]
+    },
+    {
+      "key": "is_off_shelves_soon",
+      "operator": "in",
+      "value": [
+        "0",
+        "1"
+      ]
+    },
+    {
+      "key": "stock_reduce",
+      "operator": "in",
+      "value": [
+        "1",
+        "2"
+      ]
+    },
+    {
+      "key": "stock_status",
+      "operator": "in",
+      "value": [
+        "0",
+        "1",
+	"2",
+	"3"
+      ]
+    },
+    {
+      "key": "qutota_type",
+      "operator": "in",
+      "value": [
+        "0",
+	"1",
+	"2",
+	"3",
+	"4",
+	"5"
+      ]
+    },
+    {
+      "key": "is_self_selling",
+      "operator": "in",
+      "value": [
+        "0",
+	"1"
+      ]
+    },
+    {
+      "key": "qutota_type",
+      "operator": "in",
+      "value": [
+        "0",
+	"1",
+	"2",
+	"3",
+	"4",
+	"5"
+      ]
+    },
+    {
+      "key": "is_free_freight",
+      "operator": "in",
+      "value": [
+        "0",
+	"1"
+      ]
+    },
+    {
+      "key": "presale_type",
+      "operator": "in",
+      "value": [
+        "0",
+	"1",
+	"2"
+      ]
+    },
+    {
+      "key": "can_search",
+      "operator": "in",
+      "value": [
+        "0",
+	"1"
+      ]
+    },
+    {
+      "key": "shop_type",
+      "operator": "in",
+      "value": [
+        "1",
+	"2"
+      ]
+    },
+    {
+      "key": "filed_away",
+      "operator": "in",
+      "value": [
+        "0",
+	"1"
+      ]
+    },
+    {
+      "key": "new_or_old",
+      "operator": "in",
+      "value": [
+        "0",
+	"1",
+	"2"
+      ]
+    },
+    {
+      "key": "is_deleted",
+      "operator": "in",
+      "value": [
+        "0",
+	"1"
+      ]
+    }
+  ]
+}
