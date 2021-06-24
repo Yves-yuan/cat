@@ -31,6 +31,8 @@ object TblDistinctCh2Ch {
           nextOption(map ++ Map('des -> value), tail)
         case "--pks" :: value :: tail =>
           nextOption(map ++ Map('pks -> value), tail)
+        case "--dt" :: value :: tail =>
+          nextOption(map ++ Map('dt -> value), tail)
         case string1 :: string2 =>
           tblBuilder += string1
           nextOption(map, list.tail)
@@ -47,6 +49,7 @@ object TblDistinctCh2Ch {
     val src = options.apply('src).toString
     val des = options.apply('des).toString
     val pks = options.apply('pks).toString
+    val dt = options.apply('dt).toString
     val pkArr = pks.split(',')
     val spark = SparkSession.builder().appName("Wanmei")
       .enableHiveSupport()
@@ -74,7 +77,7 @@ object TblDistinctCh2Ch {
     prop.put("ENGINE", "MergeTree()")
     df
       .drop($"rank")
-      .drop($"dt")
+      .withColumn("dt", lit(dt))
       .write
       .mode("append")
       .format("jdbc")
