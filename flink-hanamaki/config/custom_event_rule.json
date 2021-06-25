@@ -2,22 +2,6 @@
   "projectKey":"9c51446da23d44a0",
   "messageRules": [
     {
-      "eventKey": "visit",
-      "dataSourceId": "b97ddf7b836326fb",
-      "validators": [
-        {
-          "key": "attributes.name",
-          "operator": "=",
-          "value": "yuanyifei"
-        },
-        {
-          "key": "attributes.sex",
-          "operator": "in",
-          "value": ["male","female"]
-        }
-      ]
-    },
-    {
       "eventKey": "homeFlowLocationClick",
       "dataSourceId": "b97ddf7b836326fb",
       "validators": [
@@ -34,18 +18,13 @@
       ]
     },
     {
-      "eventKey": "login",
+      "eventKey": "tabbarClick",
       "dataSourceId": "b97ddf7b836326fb",
       "validators": [
         {
-          "key": "attributes.name",
+          "key": "attributes.tabbarName_var",
           "operator": "in",
-          "value": ["sad","bfddscd"]
-        },
-        {
-          "key": "attributes.sex",
-          "operator": "in",
-          "value": ["male","female"]
+          "value": ["首页","分类","我的"]
         }
       ]
     }

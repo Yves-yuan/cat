@@ -14,6 +14,7 @@ object ValidatorFactory {
         case "=" => equalValidator(jsonNode)
         case "==" => equalValidator(jsonNode)
         case "in" => inValidator(jsonNode)
+        case "match" => matchValidator(jsonNode)
       }
     } match {
       case Success(value) => value
@@ -28,6 +29,12 @@ object ValidatorFactory {
       case n: NumericNode => n.decimalValue
     }
     new ValidatorEqual(key, value)
+  }
+
+  def matchValidator(jsonNode: JsonNode): Validator = {
+    val key = jsonNode.get("key").asText()
+    val value = jsonNode.get("value").asText()
+    new ValidatorMatchRegex(key, value)
   }
 
   def inValidator(jsonNode: JsonNode): Validator = {
