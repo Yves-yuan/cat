@@ -1,10 +1,10 @@
-# 项目地址
+# Hanamaki
 
-项目目前托管在github私有仓库，地址 git@github.com:Yves-yuan/cat.git
+Hanamaki url git@github.com:Yves-yuan/cat.git
 
-# 部署
+# deploy
 
-## 准备工作
+## prepare
 
 * 从flink官网Apache Flink: Downloads下载flink的安装包flink-1.13.1-bin-scala_2.11.tgz，解压后是flink-1.13.1文件夹
 * 使用maven对hanamaki进行打包生成flink-hanamaki-0.5.jar
@@ -14,7 +14,7 @@
 * 找到源码cat/flink-hanamaki 目录下的 config 目录
 * 在config目录中配置自己的校验规则xxx_rule.json
 
-## 开始部署
+## do deploy
 
 1. 进入服务器x，创建一个目录hanamaki
 
@@ -35,7 +35,7 @@
 
 8. 以上就是部署全部流程
 
-## 校验规则配置方式
+## rule config
 
 hanamaki在启动的时候可以通过命令行参数指定规则配置文件的路径，下面我根据一个配置样例来说明如何配置校验规则。  
 克隆下来项目过后，进入cat/flink-hanamaki/config目录，打开样例custom_event_rule.json
@@ -87,14 +87,15 @@ hanamaki在启动的时候可以通过命令行参数指定规则配置文件的
 ```
 
 + 每个规则文件指定了校验的projectKey,hanamaki接收到kafka中的消息后只对与配置文件中projectKey相等的消息进行校验。
-+ messageRules配置了一系列的消息规则，每条消息规则通过eventKey（埋点事件key）和dataSourceId（数据来源，例如安卓，苹果，网页）进行指定。  
++ messageRules配置了一系列的消息规则，每条消息规则通过eventKey（埋点事件key）和dataSourceId（数据来源，例如安卓，苹果，网页）进行指定。
 + 每条rule下面的validators配置了一系列校验器，每个校验器的key指定了校验的字段，例如attributes.channelType_var指定校验attributes中的channelType_var属性。
 + operator指定了校验器的类型，在源代码rule.validator.ValidatorFactory中定义了支持的校验器类型，目前有in，equal，match三种校验器类型。
 + in代表枚举类型，表示属性值必须在配置的枚举列表中。
 + equal代表相等类型，表示属性值必须与配置值相等。
 + match代表正则表达式匹配类型，表示属性值必须与配置的正则表达式匹配。
 
-# 运维
+# operation
+
 在运行了validator_submit.sh脚本后会向yarn集群提交一个yarn application，  
 在控制台退出后，yarn application并不会结束运行，需要手动kill，  
 通过yarn application -list 找到所有正在运行的application，  
