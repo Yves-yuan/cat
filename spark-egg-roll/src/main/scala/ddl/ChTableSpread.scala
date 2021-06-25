@@ -72,7 +72,6 @@ object ChTableSpread {
           println(ctStatement)
           val spreadCtStatement = ctStatement.replace(fullName,spreadName.get)
             .replace("CREATE TABLE","CREATE TABLE if not exists")
-
           println(spreadCtStatement)
         }
 

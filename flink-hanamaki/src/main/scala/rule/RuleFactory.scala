@@ -2,21 +2,28 @@ package rule
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
+import org.slf4j.LoggerFactory
 import rule.validator.{Validator, ValidatorFactory}
 
+import scala.io.Source
+
 object RuleFactory {
-  def generateRule(ruleType: String, resource: String): Rule = {
+  val logger = LoggerFactory.getLogger("RuleFactory")
+
+  def generateRule(ruleType: String, rulePath: String): Validator = {
     ruleType match {
       case "customEvent" =>
-        customEventRuleGen(resource)
+        customEventRuleGen(rulePath)
       case _ => throw new Exception("未知的规则")
     }
   }
 
-  private def customEventRuleGen(resource: String) = {
-    val url = RuleFactory.getClass.getClassLoader.getResource(resource)
+  private def customEventRuleGen(path: String) = {
+    //    val hdfs = FileSystem.get(URI.create("hdfs://growingFS"),new Configuration())
+    //    val sourceStream = hdfs.open(new Path(path))
+    val reader = Source.fromFile(path).bufferedReader()
     val objectMapper = new ObjectMapper
-    val jsonNode = objectMapper.readTree(url)
+    val jsonNode = objectMapper.readTree(reader)
     val messageRuleNodes = jsonNode.get("messageRules").asInstanceOf[ArrayNode]
     val msgRuleBuilder = Array.newBuilder[CustomEventMessageRule]
     for (i <- 0 until messageRuleNodes.size()) {

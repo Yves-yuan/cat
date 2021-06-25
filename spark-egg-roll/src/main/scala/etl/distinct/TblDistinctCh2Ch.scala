@@ -51,7 +51,7 @@ object TblDistinctCh2Ch {
     val pks = options.apply('pks).toString
     val dt = options.apply('dt).toString
     val pkArr = pks.split(',')
-    val spark = SparkSession.builder().appName("Wanmei")
+    val spark = SparkSession.builder().appName("TblDistinctCh2Ch")
       .enableHiveSupport()
       .getOrCreate()
     import spark.implicits._
@@ -78,6 +78,7 @@ object TblDistinctCh2Ch {
     df
       .drop($"rank")
       .withColumn("dt", lit(dt))
+      .repartition(10)
       .write
       .mode("append")
       .format("jdbc")

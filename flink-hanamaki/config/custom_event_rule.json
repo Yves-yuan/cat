@@ -1,0 +1,53 @@
+{
+  "projectKey":"9c51446da23d44a0",
+  "messageRules": [
+    {
+      "eventKey": "visit",
+      "dataSourceId": "b97ddf7b836326fb",
+      "validators": [
+        {
+          "key": "attributes.name",
+          "operator": "=",
+          "value": "yuanyifei"
+        },
+        {
+          "key": "attributes.sex",
+          "operator": "in",
+          "value": ["male","female"]
+        }
+      ]
+    },
+    {
+      "eventKey": "homeFlowLocationClick",
+      "dataSourceId": "b97ddf7b836326fb",
+      "validators": [
+        {
+          "key": "attributes.channelType_var",
+          "operator": "in",
+          "value": ["安卓","iOS"]
+        },
+        {
+          "key": "attributes.floor_var",
+          "operator": "in",
+          "value": ["职业培训","为您推荐","最新课程"]
+        }
+      ]
+    },
+    {
+      "eventKey": "login",
+      "dataSourceId": "b97ddf7b836326fb",
+      "validators": [
+        {
+          "key": "attributes.name",
+          "operator": "in",
+          "value": ["sad","bfddscd"]
+        },
+        {
+          "key": "attributes.sex",
+          "operator": "in",
+          "value": ["male","female"]
+        }
+      ]
+    }
+  ]
+}

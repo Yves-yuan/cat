@@ -6,12 +6,6 @@ case class MsgRuleResult(valid: Boolean, msg: String, desc: String, childrenResu
   }
 
   override def toString: String = {
-    s"""
-       |valid:$valid
-       |msg:$msg
-       |desc:$desc
-       |----------
-       |${childrenResults.map(_.toString).mkString("\n")}
-       |""".stripMargin
+    s"""${childrenResults.map(_.toString).mkString("\n")}""".stripMargin
   }
 }

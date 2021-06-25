@@ -4,15 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer
 import org.apache.flink.streaming.connectors.kafka.partitioner.FlinkFixedPartitioner
-import source.KafkaSourceFactory
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.{FileSystem, Path}
 
+import java.net.URI
 import java.util.Properties
-import scala.reflect.io.{File, Path}
+import scala.io.Source
 
 object KafkaSinkFactory {
-  def genSourceCustomEvent(sinkKafka: String): FlinkKafkaProducer[String] = {
-    val path = KafkaSourceFactory.getClass.getClassLoader.getResource(sinkKafka).getFile
-    val reader = File.apply(Path.apply(path)).bufferedReader()
+  def genSourceCustomEvent(path: String): FlinkKafkaProducer[String] = {
+    val reader = Source.fromFile(path).bufferedReader()
+    //    val hdfs = FileSystem.get(URI.create("hdfs://growingFS"), new Configuration())
+    //    val sourceStream = hdfs.open(new Path(path))
     val objectMapper = new ObjectMapper
     val jsonNode = objectMapper.readTree(reader)
     val topic = jsonNode.get("topic").asText()

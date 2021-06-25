@@ -41,16 +41,16 @@ object ValidatorFactory {
         node1 match {
           case n: TextNode =>
             val arrBuilder = Array.newBuilder[String]
-            for (i <- 0 until n.size()) {
-              arrBuilder += n.get(i).asText()
+            for (i <- 0 until arrayNode.size()) {
+              arrBuilder += arrayNode.get(i).asText()
             }
-            new ValidatorEqual(key, arrBuilder.result())
+            new ValidatorIn(key, arrBuilder.result())
           case n: NumericNode =>
             val arrBuilder = Array.newBuilder[BigDecimal]
-            for (i <- 0 until n.size()) {
-              arrBuilder += n.get(i).decimalValue
+            for (i <- 0 until arrayNode.size()) {
+              arrBuilder += arrayNode.get(i).decimalValue
             }
-            new ValidatorEqual(key, arrBuilder.result())
+            new ValidatorIn(key, arrBuilder.result())
           case _ => throw new Exception(s"unsupported array value type in 'in' operator ${arrayNode.toString}")
         }
       case _ =>

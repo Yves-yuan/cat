@@ -1,18 +1,19 @@
 package serde
 
-import io.growing.validator.tunnel.protocol.CustomEventMessage
-import org.apache.flink.api.common.serialization.DeserializationSchema
+import io.growing.collector.tunnel.protocol.EventDto
 import org.apache.flink.api.common.typeinfo.{TypeHint, TypeInformation}
+import org.apache.flink.streaming.connectors.kafka.KafkaDeserializationSchema
+import org.apache.kafka.clients.consumer.ConsumerRecord
 
-class ProtoDeserializationSchema extends DeserializationSchema[CustomEventMessage] {
+class ProtoDeserializationSchema extends KafkaDeserializationSchema[EventDto] {
 
-  override def deserialize(bytes: Array[Byte]): CustomEventMessage = {
-    CustomEventMessage.parseFrom(bytes)
-  }
 
-  override def isEndOfStream(t: CustomEventMessage): Boolean = {
+  override def isEndOfStream(t: EventDto): Boolean = {
     false
   }
+  override def getProducedType: TypeInformation[EventDto] = TypeInformation.of(new TypeHint[EventDto] {})
 
-  override def getProducedType: TypeInformation[CustomEventMessage] = TypeInformation.of(new TypeHint[CustomEventMessage] {})
+  override def deserialize(consumerRecord: ConsumerRecord[Array[Byte], Array[Byte]]): EventDto = {
+    EventDto.parseFrom(consumerRecord.value())
+  }
 }

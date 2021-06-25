@@ -2,29 +2,31 @@ package rule
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.google.protobuf.GeneratedMessageV3
+import io.growing.collector.tunnel.protocol.EventDto
 import rule.result.{MsgRuleResult, Result}
 import rule.validator.Validator
 
 import scala.util.{Failure, Success, Try}
 
-class CustomEventMessageRule(jsonNode: JsonNode, validators: Array[Validator]) extends Rule with ProtobufBase with Serializable {
+class CustomEventMessageRule(jsonNode: JsonNode, validators: Array[Validator]) extends Validator with ProtobufBase with Serializable {
   var myEventKey: String = jsonNode.get("eventKey").asText()
-  var myUe: String = jsonNode.get("ue").asText()
+  var myDataSourceId: String = jsonNode.get("dataSourceId").asText()
 
-  def validate(data: GeneratedMessageV3): Option[Result] = {
+  def validate(data: AnyRef): Option[Result] = {
     Try {
-      val eventKey = getField("eventKey", data)
-      val ue = getField("ue", data)
-      if (eventKey == myEventKey && ue == myUe) {
+      val myData = data.asInstanceOf[EventDto]
+      val eventKey = myData.getEventKey
+      val dataSourceId = myData.getDataSourceId
+      if (eventKey == myEventKey && dataSourceId == myDataSourceId) {
         val validatorResults = validators.map { v => {
           v.validate(data)
         }
-        }
+        }.filter(_.isDefined).map(_.get)
         var valid = true
         if (validatorResults.exists(_.isValid == false)) {
           valid = false
         }
-        Some(MsgRuleResult(valid, data.toString, s"消息级别校验", validatorResults))
+        Some(MsgRuleResult(valid, "", s"", validatorResults))
       } else {
         None
       }

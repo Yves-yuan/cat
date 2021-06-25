@@ -1,7 +1,6 @@
 package rule.validator
 
-import com.google.protobuf.Descriptors.FieldDescriptor
-import com.google.protobuf.GeneratedMessageV3
+import io.growing.collector.tunnel.protocol.EventDto
 import rule.ProtobufBase
 import rule.result.{Result, ValidatorResult}
 
@@ -11,21 +10,25 @@ class ValidatorMatchRegex(fieldName: String, equalValue: String) extends Validat
   var myEqualValue: String = equalValue
   var myFieldName: String = fieldName
 
-  override def validate(data: GeneratedMessageV3): Result = {
+  override def validate(data: AnyRef): Option[Result] = {
     Try {
-      val ft = getFieldAndType(myFieldName, data)
-      val field = ft._1
-      val fieldType = ft._2
-      val valid = fieldType match {
-        case FieldDescriptor.Type.STRING =>
-          myEqualValue.r.findFirstIn(field.asInstanceOf[String]).isDefined
-          myEqualValue.exists(_.equals(field))
-        case _ => throw new Exception("expected value must be regex string")
+      val myData = data.asInstanceOf[EventDto]
+      if (!myFieldName.startsWith("attributes")) {
+        throw new Exception("暂时不支持非attributes校验")
+      } else {
+        val fn = myFieldName.split('.')(1)
+        val v = myData.getAttributesMap.get(fn)
+        val valid = myEqualValue.r.findFirstIn(v).isDefined
+        val msg =
+          s"""正则表达式规则校验结果:$valid
+             |$myFieldName:$v
+             |rule:${toString}""".stripMargin
+        ValidatorResult(valid, msg)
       }
-      ValidatorResult(valid, toString, "相等规则校验结果")
+
     } match {
-      case Success(value) => value
-      case Failure(exception) => ValidatorResult(valid = false, toString, exception.toString)
+      case Success(value) => Some(value)
+      case Failure(exception) => Some(ValidatorResult(valid = false, exception.toString))
     }
   }
 

@@ -32,4 +32,10 @@ trait ProtobufBase {
       case Some(x) => (data.getField(x), x.getType)
     }
   }
+  def getFieldAndFD(name: String, data: GeneratedMessageV3): (AnyRef, FieldDescriptor) = {
+    findField(name, data) match {
+      case None => throw new Exception("no name " + name + " found")
+      case Some(x) => (data.getField(x), x)
+    }
+  }
 }

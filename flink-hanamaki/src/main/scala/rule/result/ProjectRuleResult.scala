@@ -6,12 +6,17 @@ case class ProjectRuleResult(valid: Boolean, projectKey: String, desc: String, c
   }
 
   override def toString: String = {
+    val childStr = if (childrenResults.isEmpty) {
+      "没有匹配的消息规则"
+    } else {
+      childrenResults.map(_.toString).mkString("\n")
+    }
     s"""
-       |valid:$valid
-       |projectKey:$projectKey
-       |desc:$desc
-       |----------
-       |${childrenResults.map(_.toString).mkString("\n")}
+       |----start----
+       |消息验证结果:$valid
+       |$desc
+       |$childStr
+       |----end----
        |""".stripMargin
   }
 }
