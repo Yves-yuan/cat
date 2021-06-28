@@ -2,10 +2,10 @@
 This repository is about data processing using spark and flink
 
 ## hanamaki
-hanamaki is a validator using flink to validate event in kafka.
+Hanamaki is a validator using flink to validate event in kafka.
 
 ## egg-roll
-egg-roll is a spark etl project.
+Egg-roll is a spark etl project.
 
 ## developer
 每个developer建立自己的分支，公共特性可以提交到自己分支然后合入master。
