@@ -1,0 +1,25 @@
+{
+  "table_name": "ods.ods_ps_product_sku_attr_df",
+  "validators": [
+    {
+      "key":"is_fill",
+      "operator": "in",
+      "value": ["0","1"]
+    },
+    {
+      "key":"form_organize",
+      "operator": "in",
+      "value": ["10","20","30"]
+    },
+    {
+      "key":"del_flag",
+      "operator": "in",
+      "value": ["0","1"]
+    },
+    {
+      "key":"attr_type",
+      "operator": "in",
+      "value": ["1","2","3"]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "table_name": "ods.ods_mp_wi_category_df",
+  "validators": [
+    {
+      "key":"is_deleted",
+      "operator": "in",
+      "value": ["0","1"]
+    }
+  ]
+}

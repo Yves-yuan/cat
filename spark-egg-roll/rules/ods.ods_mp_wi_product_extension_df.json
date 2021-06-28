@@ -1,0 +1,40 @@
+{
+  "table_name": "ods.ods_mp_wi_product_extension_df",
+  "validators": [
+    {
+      "key":"delivery_type",
+      "operator": "in",
+      "value": ["001","010","100"]
+    },
+    {
+      "key":"freight_type",
+      "operator": "in",
+      "value": ["1","2"]
+    },
+    {
+      "key":"is_special",
+      "operator": "in",
+      "value": ["0","1"]
+    },
+    {
+      "key":"is_close_share",
+      "operator": "in",
+      "value": ["0","1"]
+    },
+    {
+      "key":"use_type",
+      "operator": "in",
+      "value": ["0","1"]
+    },
+    {
+      "key":"create_type",
+      "operator": "in",
+      "value": ["0","1"]
+    },
+    {
+      "key":"is_open_deposit",
+      "operator": "in",
+      "value": ["0","1"]
+    }
+  ]
+}

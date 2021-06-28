@@ -1,0 +1,10 @@
+{
+  "table_name": "ods.ods_ps_product_spu_df",
+  "validators": [
+    {
+      "key":"del_flag",
+      "operator": "in",
+      "value": ["1","0"]
+    }
+  ]
+}

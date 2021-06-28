@@ -1,0 +1,15 @@
+{
+  "table_name": "ods.ods_ps_product_sku_sale_df",
+  "validators": [
+    {
+      "key":"item_type",
+      "operator": "in",
+      "value": ["1","2","3"]
+    },
+    {
+      "key":"del_flag",
+      "operator": "in",
+      "value": ["0","1"]
+    }
+  ]
+}

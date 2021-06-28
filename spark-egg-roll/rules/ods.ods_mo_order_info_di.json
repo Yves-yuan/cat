@@ -1,0 +1,80 @@
+{
+  "table_name": "ods.ods_mp_wi_category_df",
+  "validators": [
+    {
+      "key":"order_status",
+      "operator": "in",
+      "value": ["0","1","2","3","4"]
+    },
+    {
+      "key":"pay_status",
+      "operator": "in",
+      "value": ["0","1","2"]
+    },
+    {
+      "key":"down_pay_status",
+      "operator": "in",
+      "value": ["0","1","2"]
+    },
+    {
+      "key":"is_need_sync_wx",
+      "operator": "in",
+      "value": ["0","1"]
+    },
+    {
+      "key":"shipping_status",
+      "operator": "in",
+      "value": ["0","1","2","3","4"]
+    },
+    {
+      "key":"refund_status",
+      "operator": "in",
+      "value": ["0","1","2","3"]
+    },
+    {
+      "key":"order_type",
+      "operator": "in",
+      "value": ["1","2","3","4","5"]
+    },
+    {
+      "key":"sale_mode",
+      "operator": "in",
+      "value": ["1","2","3"]
+    },
+    {
+      "key":"is_group",
+      "operator": "in",
+      "value": ["0","1","2","3"]
+    },
+    {
+      "key":"is_change",
+      "operator": "in",
+      "value": ["0","1","2"]
+    },
+    {
+      "key":"pay_type",
+      "operator": "in",
+      "value": ["0","1","2"]
+    },
+    {
+      "key":"order_split",
+      "operator": "in",
+      "value": ["0","1","2"]
+    },
+    {
+      "key":"stock_status",
+      "operator": "in",
+      "value": ["0","1","2","3"]
+    },
+    {
+      "key":"is_deleted",
+      "operator": "in",
+      "value": ["0","1"]
+    },
+    {
+      "key":"has_comment",
+      "operator": "in",
+      "value": ["0","1"]
+    }
+  ]
+}
