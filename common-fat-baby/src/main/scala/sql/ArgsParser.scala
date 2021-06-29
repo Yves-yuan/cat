@@ -4,7 +4,7 @@ import scala.util.matching.Regex
 
 class ArgsParser(args: Map[Symbol, Any]) extends Parser {
   val regex1: Regex = "(\\$\\{[^ ]*})".r
-  val regex2: Regex = "(\\$[^ ]*)".r
+  val regex2: Regex = "(\\$[a-zA-Z0-9|_]*)".r
 
   override def parse(sql: String): String = {
     val r1 = regex1
