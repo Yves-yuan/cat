@@ -1,10 +1,10 @@
 package etl.runner
 
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import env.CatEnv
 
 class CustomSql(sql: String, sink: String) extends Runner {
-  def run(spark: SparkSession): Unit = {
-    val df = spark.sql(sql)
+  def run(env: CatEnv): Unit = {
+    val df = env.spark.sql(sql)
     sink match {
       case "null" => "do nothing"
       case anyOther => df.createTempView(anyOther)

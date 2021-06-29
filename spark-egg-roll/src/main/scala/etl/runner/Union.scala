@@ -1,11 +1,12 @@
 package etl.runner
 
+import env.CatEnv
 import org.apache.spark.sql.SparkSession
 
 class Union(sqls: Array[String], sink: String) extends Runner {
-  def run(spark: SparkSession): Unit = {
+  def run(env: CatEnv): Unit = {
     val df = sqls.map { s => {
-      spark.sql(s)
+      env.spark.sql(s)
     }
     }.reduce((left, right) => {
       left.union(right)

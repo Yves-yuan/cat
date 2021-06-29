@@ -19,7 +19,10 @@ object JsonReader {
         val sourceStream = hdfs.open(new Path(path))
         val objectMapper = new ObjectMapper
         objectMapper.readTree(sourceStream)
-      case _ => throw new Exception(s"unsupported file format $path")
+      case p =>
+        val file = new File(p)
+        val objectMapper = new ObjectMapper
+        objectMapper.readTree(file)
     }
   }
 }

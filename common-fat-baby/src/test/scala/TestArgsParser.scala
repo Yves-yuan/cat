@@ -1,19 +1,13 @@
-package bin
-
-import env.CatEnv
-import input.InputPool
-import json.JsonReader
-import org.apache.spark.sql.SparkSession
+import sql.ArgsParser
 
 import scala.annotation.tailrec
 import scala.sys.exit
 
-object EtlRunnerGo {
+object TestArgsParser {
   val usage =
     """
     Usage: EtlRunnerGo [--runner_config 'path to runner config' --dt '20210610']
   """
-
   def main(args: Array[String]): Unit = {
     if (args.length == 0) println(usage)
     val tblBuilder = Array.newBuilder[String]
@@ -36,17 +30,11 @@ object EtlRunnerGo {
     }
 
     val options = nextOption(Map(), args.toList)
-    InputPool.inputMap = Some(options)
     println(options)
-    val spark = SparkSession.builder().appName("EtlRunnerGo")
-      .enableHiveSupport()
-      .getOrCreate()
-    val catEnv = CatEnv.builder()
-      .arg(options)
-      .build(spark)
-    val path = options('runner_config).toString
-    val jsonNode = JsonReader.readFromFile(path)
-    catEnv.addRunner(jsonNode)
-    catEnv.run()
+    val parser = new ArgsParser(options)
+    val sql = "select $myname from addada where ${dt} = ${dt_dt}"
+    val s1 = parser.parse(sql)
+    println(sql)
+    println(s1)
   }
 }
