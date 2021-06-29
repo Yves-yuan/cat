@@ -3,7 +3,7 @@
     {
       "type": "union",
       "sqls": [
-        "select * from ods.ods_mo_order_info_di where dt=$last_dt",
+        "select * from ods.ods_mo_order_info_di where dt=$dt",
         "select * from dwd.dwd_mo_order_info_df where dt=$last_dt"
       ],
       "sink": "union_temp_view"
