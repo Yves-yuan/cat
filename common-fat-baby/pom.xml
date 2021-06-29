@@ -9,17 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spark-egg-roll</artifactId>
+    <artifactId>common-fat-baby</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
-    <dependencies>
-        <dependency>
-            <groupId>org</groupId>
-            <artifactId>common-fat-baby</artifactId>
-            <version>${cat.version}</version>
-        </dependency>
-    </dependencies>
+
 </project>

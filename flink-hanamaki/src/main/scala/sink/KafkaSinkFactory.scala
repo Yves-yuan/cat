@@ -1,6 +1,7 @@
 package sink
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import json.JsonReader
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer
 import org.apache.flink.streaming.connectors.kafka.partitioner.FlinkFixedPartitioner
@@ -16,8 +17,9 @@ object KafkaSinkFactory {
     val reader = Source.fromFile(path).bufferedReader()
     //    val hdfs = FileSystem.get(URI.create("hdfs://growingFS"), new Configuration())
     //    val sourceStream = hdfs.open(new Path(path))
-    val objectMapper = new ObjectMapper
-    val jsonNode = objectMapper.readTree(reader)
+//    val objectMapper = new ObjectMapper
+//    val jsonNode = objectMapper.readTree(reader)
+    val jsonNode = JsonReader.readFromFile(path)
     val topic = jsonNode.get("topic").asText()
     val bootstrapServer = jsonNode.get("bootstrapServer").asText()
     val properties = new Properties()

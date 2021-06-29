@@ -2,6 +2,7 @@ package rule
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
+import json.JsonReader
 import org.slf4j.LoggerFactory
 import rule.validator.{Validator, ValidatorFactory}
 
@@ -21,9 +22,7 @@ object RuleFactory {
   private def customEventRuleGen(path: String) = {
     //    val hdfs = FileSystem.get(URI.create("hdfs://growingFS"),new Configuration())
     //    val sourceStream = hdfs.open(new Path(path))
-    val reader = Source.fromFile(path).bufferedReader()
-    val objectMapper = new ObjectMapper
-    val jsonNode = objectMapper.readTree(reader)
+    val jsonNode = JsonReader.readFromFile(path)
     val messageRuleNodes = jsonNode.get("messageRules").asInstanceOf[ArrayNode]
     val msgRuleBuilder = Array.newBuilder[CustomEventMessageRule]
     for (i <- 0 until messageRuleNodes.size()) {

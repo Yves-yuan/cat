@@ -1,0 +1,31 @@
+{
+  "runners": [
+    {
+      "type": "union",
+      "sqls": [
+        "select * from ods.ods_mo_order_info_di where dt=$last_dt",
+        "select * from dwd.dwd_mo_order_info_df where dt=$last_dt"
+      ],
+      "sink": "union_temp_view"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "select row_number() over (partition by id order by dt desc) as row_number,* from union_temp_view",
+      "sink": "tmp1"
+    },
+    {
+      "type": "drop_column",
+      "sql": "select * from tmp1",
+      "drop_columns": [
+        "row_number",
+        "dt"
+      ],
+      "sink": "res"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "insert overwrite table dwd.dwd_mo_order_info_df partition(dt='$dt') select * from res",
+      "sink": "null"
+    }
+  ]
+}

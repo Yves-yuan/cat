@@ -3,11 +3,6 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>org.cat</groupId>
-    <artifactId>cat</artifactId>
-    <packaging>pom</packaging>
-    <version>0.5</version>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
@@ -15,10 +10,17 @@
         <flink.version>1.13.1</flink.version>
         <scala.version>2.11.8</scala.version>
         <scala.version.parent>2.11</scala.version.parent>
+        <cat.version>0.5</cat.version>
     </properties>
+    <groupId>org</groupId>
+    <artifactId>cat</artifactId>
+    <packaging>pom</packaging>
+    <version>0.5</version>
+
     <modules>
         <module>flink-hanamaki</module>
         <module>spark-egg-roll</module>
+        <module>common-fat-baby</module>
     </modules>
     <repositories>
         <repository>

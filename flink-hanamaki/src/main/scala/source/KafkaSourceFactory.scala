@@ -2,6 +2,7 @@ package source
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.growing.collector.tunnel.protocol.EventDto
+import json.JsonReader
 import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
@@ -14,10 +15,11 @@ object KafkaSourceFactory {
   def genSourceCustomEvent(path: String, env: StreamExecutionEnvironment): DataStream[EventDto] = {
     //    val hdfs = FileSystem.get(URI.create("hdfs://growingFS"),new Configuration())
     //    val sourceStream = hdfs.open(new Path(path))
-    val file = Source.fromFile(path)
-    val reader = file.bufferedReader()
-    val objectMapper = new ObjectMapper
-    val jsonNode = objectMapper.readTree(reader)
+//    val file = Source.fromFile(path)
+//    val reader = file.bufferedReader()
+//    val objectMapper = new ObjectMapper
+//    val jsonNode = objectMapper.readTree(reader)
+    val jsonNode = JsonReader.readFromFile(path)
     val topic = jsonNode.get("topic").asText()
     val bootstrapServer = jsonNode.get("bootstrapServer").asText()
 

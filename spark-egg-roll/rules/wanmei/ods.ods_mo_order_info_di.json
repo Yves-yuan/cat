@@ -1,5 +1,5 @@
 {
-  "table_name": "ods.ods_mp_wi_category_df",
+  "table_name": "ods.ods_mo_order_info_di",
   "validators": [
     {
       "key":"order_status",
