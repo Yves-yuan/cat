@@ -41,9 +41,19 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
     }
   }
 
+  private def validateSql(s: String): Unit = {
+    val ms = argsParser.matches(s)
+    if (ms.length > 0) {
+      if (settings.getOrElse("validate_sql_force", "true") == "true") {
+        throw new IllegalArgumentException(ms.mkString(",") + " must be assigned")
+      }
+    }
+  }
+
   private def createCustomSql(json: JsonNode): Runner = {
     val sql = json.get("sql").asText()
     val sqlParsed = argsParser.parse(sql)
+    validateSql(sqlParsed)
     val sink = json.get("sink").asText()
     new CustomSql(sqlParsed, sink)
   }
@@ -51,6 +61,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
   private def createDropColumns(json: JsonNode): Runner = {
     val sql = json.get("sql").asText()
     val sqlParsed = argsParser.parse(sql)
+    validateSql(sqlParsed)
     val sink = json.get("sink").asText()
     val columns = arrayNodeToStringArray(json.get("drop_columns").asInstanceOf[ArrayNode])
     new DropColumns(sqlParsed, sink, columns)
@@ -59,7 +70,9 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
   private def createUnion(json: JsonNode): Runner = {
     val sqls = arrayNodeToStringArray(json.get("sqls").asInstanceOf[ArrayNode])
     val sqlsParsed = sqls.map { sql => {
-      argsParser.parse(sql)
+      val s1 = argsParser.parse(sql)
+      validateSql(s1)
+      s1
     }
     }
     val sink = json.get("sink").asText()
