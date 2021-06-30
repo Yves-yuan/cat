@@ -1,8 +1,8 @@
 package env
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.ArrayNode
-import etl.runner.{CustomSql, DropColumns, Runner, Union}
+import com.fasterxml.jackson.databind.node.{ArrayNode, TextNode}
+import etl.runner._
 import org.apache.spark.sql.SparkSession
 import sql.ArgsParser
 
@@ -37,6 +37,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       case "union" => createUnion(json)
       case "custom_sql" => createCustomSql(json)
       case "drop_column" => createDropColumns(json)
+      case "table_merge" => createMerge(json)
       case x => throw new Exception(s"runner type $x not supported now")
     }
   }
@@ -77,6 +78,27 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
     }
     val sink = json.get("sink").asText()
     new Union(sqlsParsed, sink)
+  }
+
+  private def createMerge(json: JsonNode): Runner = {
+    val table = json.get("table") match {
+      case node if (node.isInstanceOf[TextNode]) =>
+        node.asText()
+      case _ => throw new Exception("table 节点必须是string 类型")
+    }
+    val tablesBuilder = scala.collection.mutable.ArrayBuilder.make[TableWithColumnPrefix]()
+    json.get("tables") match {
+      case nodes if (nodes.isInstanceOf[ArrayNode]) =>
+        for (i <- 0 until nodes.size()) {
+          val node = nodes.get(i)
+          val tableName = node.get("name").asText()
+          val columnPrefix = node.get("column_prefix").asText()
+          tablesBuilder += TableWithColumnPrefix(tableName, columnPrefix)
+        }
+
+      case _ => throw new Exception("tables 节点必须是数组节点")
+    }
+    new TableMerge(table, tablesBuilder.result())
   }
 
   private def arrayNodeToStringArray(node: ArrayNode): Array[String] = {
