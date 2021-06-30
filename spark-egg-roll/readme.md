@@ -40,7 +40,7 @@ ods_mo_order_info_di,customer_id
     从外部数据库接入hive ods仓库，数据按照dt分区，每日接入
 2.  ods表去重生成dwd全量快照表  
     每日对ods表根据id取最新dt去重
-3.  主题域内dwd表关联生成dws表  
+3.  主题域内dwd表关联生成dws表，字段保留，名字修改为表名加字段名  
     主体域内dwd表选择关联字段，每日关联后生成dws分区表
 4.  dws表根据主键去重生成model表
     dws主题域宽表选择复合主键，根据主键去重取最新dt数据，生成model表
