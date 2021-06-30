@@ -5,6 +5,9 @@ import org.apache.spark.sql.SparkSession
 import scala.annotation.tailrec
 import scala.sys.exit
 
+/**
+ * todo:这个ch 2 hive 的功能后续也应该由EtlRunnerGo 实现
+ */
 object ChTbl2HiveTbl {
   val usage =
     """

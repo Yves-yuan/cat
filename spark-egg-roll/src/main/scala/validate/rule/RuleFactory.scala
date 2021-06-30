@@ -1,16 +1,12 @@
 package validate.rule
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.{ArrayNode, TextNode}
+import json.JsonReader
 import validate.rule.validator.{Validator, ValidatorFactory}
-
-import java.io.File
 
 object RuleFactory {
   def getTableRule(path: String): TableRule = {
-    val file = new File(path)
-    val objectMapper = new ObjectMapper
-    val jsonNode = objectMapper.readTree(file)
+    val jsonNode = JsonReader.readFromFile(path)
     val tableName = jsonNode.get("table_name").asInstanceOf[TextNode].asText()
     val validatorNodes = jsonNode.get("validators").asInstanceOf[ArrayNode]
     val validatorBuilder = Array.newBuilder[Validator]
@@ -19,6 +15,6 @@ object RuleFactory {
       val validator = ValidatorFactory.genValidator(validatorNode)
       validatorBuilder += validator
     }
-    TableRule(tableName,validatorBuilder.result())
+    TableRule(tableName, validatorBuilder.result())
   }
 }

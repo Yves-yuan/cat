@@ -8,6 +8,9 @@ import java.util.Properties
 import scala.annotation.tailrec
 import scala.sys.exit
 
+/**
+ * 规则校验入口
+ */
 object RuleValidateRunner {
   val usage =
     """
