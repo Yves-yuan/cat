@@ -1,8 +1,6 @@
 package ddl
 
-import env.CatEnv
 import input.InputPool
-import json.JsonReader
 import org.apache.spark.sql.SparkSession
 
 import scala.annotation.tailrec
@@ -41,7 +39,7 @@ object CreateTableLike {
     val to = options('to)
     val spark = SparkSession
       .builder()
-      .appName("EtlRunnerGo")
+      .appName("CreateTableLike")
       .enableHiveSupport()
       .getOrCreate()
     val s = spark.sql(s"show create table $from")
