@@ -3,8 +3,8 @@
     {
       "type": "union",
       "sqls": [
-        "select * from ods.ods_mo_order_info_di where dt=$dt",
-        "select * from dwd.dwd_mo_order_info_df where dt=$last_dt"
+        "select * from $inc_table where dt=$dt",
+        "select * from $full_table where dt=$last_dt"
       ],
       "sink": "union_temp_view"
     },
@@ -24,7 +24,7 @@
     },
     {
       "type": "custom_sql",
-      "sql": "insert overwrite table dwd.dwd_mo_order_info_df partition(dt='$dt') select * from res",
+      "sql": "insert overwrite table $full_table partition(dt='$dt') select * from res",
       "sink": "null"
     }
   ]
