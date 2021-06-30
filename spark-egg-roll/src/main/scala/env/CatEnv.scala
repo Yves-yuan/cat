@@ -45,7 +45,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
     val ms = argsParser.matches(s)
     if (ms.length > 0) {
       if (settings.getOrElse("validate_sql_force", "true") == "true") {
-        throw new IllegalArgumentException(ms.mkString(",") + " must be assigned")
+        throw new IllegalArgumentException(ms.mkString(",") + " must be assigned by input args")
       }
     }
   }
