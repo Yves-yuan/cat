@@ -15,7 +15,7 @@
     },
     {
       "type": "drop_column",
-      "sql": "select * from tmp1",
+      "sql": "select * from tmp1 where row_number = 1 ",
       "drop_columns": [
         "row_number",
         "dt"
