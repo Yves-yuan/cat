@@ -1,19 +1,12 @@
-package bin
-
+import bin.EtlRunnerGo.usage
 import env.CatEnv
 import input.InputPool
 import json.JsonReader
-import org.apache.spark.sql.SparkSession
 
 import scala.annotation.tailrec
 import scala.sys.exit
 
-object EtlRunnerGo {
-  val usage =
-    """
-    Usage: EtlRunnerGo [--runner_config 'path to runner config' --dt '20210610']
-  """
-
+object TestRunnerBuild {
   def main(args: Array[String]): Unit = {
     if (args.length == 0) println(usage)
     val tblBuilder = Array.newBuilder[String]
@@ -38,15 +31,9 @@ object EtlRunnerGo {
     val options = nextOption(Map(), args.toList)
     InputPool.inputMap = Some(options)
     println(options)
-    val path = options('runner_config).toString
+    val path = "D:\\dev\\cat\\spark-egg-roll\\config\\etl\\wanmei\\ch_sink.json"
     val jsonNode = JsonReader.readFromFile(path)
-    val spark = SparkSession.builder()
-      .enableHiveSupport()
-      .getOrCreate()
-    val catEnv = CatEnv.builder()
-      .arg(options)
-      .build(spark)
-    catEnv.addRunner(jsonNode)
-    catEnv.run()
+    val env = new CatEnv(null,options,Map.empty)
+    env.addRunner(jsonNode)
   }
 }

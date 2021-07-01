@@ -88,9 +88,11 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       val n = fs.next()
       val v = n.getValue.asText()
       val parsedValue = argsParser.parse(v)
-      validateArgs(parsedValue)
       config.put(n.getKey, parsedValue)
     }
+    config.foreach(x=>{
+      validateArgs(x._2)
+    })
     new ChSink(config)
   }
 
