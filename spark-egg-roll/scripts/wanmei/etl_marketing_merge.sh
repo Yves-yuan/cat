@@ -2,9 +2,10 @@ source /etc/profile
 basedir=`dirname $0`
 cd $basedir
 dt=$1
-#if [ ! $path ];then
-#dt=20210630
-#fi
+if [ ! dt ];then
+  echo input dt
+  exit
+fi
 
 libs=`echo $basedir/dependency/* |tr ' ' ','`
 spark-submit --class bin.EtlRunnerGo \
