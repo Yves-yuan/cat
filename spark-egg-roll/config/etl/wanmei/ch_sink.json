@@ -1,0 +1,15 @@
+{
+  "runners": [
+    {
+      "from": "select * from ${table} where dt=${dt}",
+      "type": "ch_sink",
+      "name": "$table",
+      "engine": "MergeTree",
+      "partition_key": "dt",
+      "order_by": "${order_by}",
+      "url": "jdbc:clickhouse://10.6.8.39:8123",
+      "user": "root",
+      "password": "7rgbbg93lt67s3sn"
+    }
+  ]
+}

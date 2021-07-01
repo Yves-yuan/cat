@@ -6,8 +6,8 @@ class ArgsParser(args: Map[Symbol, Any]) extends Parser {
   val regex1: Regex = "(\\$\\{[^ ]*})".r
   val regex2: Regex = "(\\$[a-zA-Z0-9|_]*)".r
 
-  override def parse(sql: String): String = {
-    var res = sql
+  override def parse(input: String): String = {
+    var res = input
     val matches1 = regex1.findAllMatchIn(res)
     matches1.foreach(m => {
       val g1 = m.group(1)

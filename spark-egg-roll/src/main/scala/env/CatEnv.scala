@@ -38,14 +38,15 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       case "custom_sql" => createCustomSql(json)
       case "drop_column" => createDropColumns(json)
       case "table_merge" => createMerge(json)
+      case "ch_sink" => createChSink(json)
       case x => throw new Exception(s"runner type $x not supported now")
     }
   }
 
-  private def validateSql(s: String): Unit = {
+  private def validateArgs(s: String): Unit = {
     val ms = argsParser.matches(s)
     if (ms.length > 0) {
-      if (settings.getOrElse("validate_sql_force", "true") == "true") {
+      if (settings.getOrElse("validate_args_force", "true") == "true") {
         throw new IllegalArgumentException(ms.mkString(",") + " must be assigned by input args")
       }
     }
@@ -54,7 +55,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
   private def createCustomSql(json: JsonNode): Runner = {
     val sql = json.get("sql").asText()
     val sqlParsed = argsParser.parse(sql)
-    validateSql(sqlParsed)
+    validateArgs(sqlParsed)
     val sink = json.get("sink").asText()
     new CustomSql(sqlParsed, sink)
   }
@@ -62,7 +63,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
   private def createDropColumns(json: JsonNode): Runner = {
     val sql = json.get("sql").asText()
     val sqlParsed = argsParser.parse(sql)
-    validateSql(sqlParsed)
+    validateArgs(sqlParsed)
     val sink = json.get("sink").asText()
     val columns = arrayNodeToStringArray(json.get("drop_columns").asInstanceOf[ArrayNode])
     new DropColumns(sqlParsed, sink, columns)
@@ -72,12 +73,25 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
     val sqls = arrayNodeToStringArray(json.get("sqls").asInstanceOf[ArrayNode])
     val sqlsParsed = sqls.map { sql => {
       val s1 = argsParser.parse(sql)
-      validateSql(s1)
+      validateArgs(s1)
       s1
     }
     }
     val sink = json.get("sink").asText()
     new Union(sqlsParsed, sink)
+  }
+
+  private def createChSink(json: JsonNode): Runner = {
+    val config = new scala.collection.mutable.HashMap[String, String]()
+    val fs = json.fields()
+    while (fs.hasNext) {
+      val n = fs.next()
+      val v = n.getValue.asText()
+      val parsedValue = argsParser.parse(v)
+      validateArgs(parsedValue)
+      config.put(n.getKey, parsedValue)
+    }
+    new ChSink(config)
   }
 
   private def createMerge(json: JsonNode): Runner = {
