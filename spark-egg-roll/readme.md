@@ -15,25 +15,22 @@ ddl模块包括一些自动化ddl操作，例如自动化建表
 + 进入服务器创建目录，将spark-egg-roll-0.5.jar，dependency 文件夹，拷入目录
 + 创建shell脚本，编辑任务提交命令例如：
 ```shell
-source /etc/profile
-dt=$1
-basedir=`dirname $0`
-cd $basedir
-libs=`echo $basedir/dependency/* |tr ' ' ','`
-echo $libs
-spark-submit --class validate.Uniqueness \
+spark-submit --class bin.EtlRunnerGo \
     --master yarn \
     --deploy-mode client \
     --driver-memory 4g \
     --executor-memory 2g \
     --executor-cores 1 \
-    --num-executors 4 \
+    --num-executors 20 \
     --jars $libs \
-/root/yuanyifei/spark-egg-roll-0.5.jar --dt $dt \
-ods_mo_order_info_di,id \
-ods_mo_order_info_di,customer_id
+ $basedir/spark-egg-roll-0.5.jar \
+ --runner_config $path \
+ --dt $dt \
+ --last_dt $last_dt \
+ --inc_table $inc_table \
+ --full_table $full_table
 ```
-+ 运行以上 shell 即可提交 validate.Uniqueness 任务
+具体请参考scripts下的脚本。
 
 ## ETL 标准化
 1.  数据接入hive ods  
