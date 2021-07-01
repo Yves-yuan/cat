@@ -1,6 +1,6 @@
 package etl.runner
 
-import env.CatEnv
+import etl.env.CatEnv
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 class DropColumns(sql: String, sink: String, columns: Array[String]) extends Runner {

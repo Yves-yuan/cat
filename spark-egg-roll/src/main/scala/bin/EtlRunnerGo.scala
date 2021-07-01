@@ -1,6 +1,6 @@
 package bin
 
-import env.CatEnv
+import etl.env.CatEnv
 import input.InputPool
 import json.JsonReader
 import org.apache.spark.sql.SparkSession

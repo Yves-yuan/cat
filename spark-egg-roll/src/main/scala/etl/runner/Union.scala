@@ -1,6 +1,6 @@
 package etl.runner
 
-import env.CatEnv
+import etl.env.CatEnv
 import org.apache.spark.sql.SparkSession
 
 class Union(sqls: Array[String], sink: String) extends Runner {

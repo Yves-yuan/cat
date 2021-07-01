@@ -1,6 +1,6 @@
 package etl.runner
 
-import env.CatEnv
+import etl.env.CatEnv
 
 class CustomSql(sql: String, sink: String) extends Runner {
   def run(env: CatEnv): Unit = {

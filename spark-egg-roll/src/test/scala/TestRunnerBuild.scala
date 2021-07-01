@@ -1,5 +1,5 @@
 import bin.EtlRunnerGo.usage
-import env.CatEnv
+import etl.env.CatEnv
 import input.InputPool
 import json.JsonReader
 
@@ -31,7 +31,7 @@ object TestRunnerBuild {
     val options = nextOption(Map(), args.toList)
     InputPool.inputMap = Some(options)
     println(options)
-    val path = "D:\\dev\\cat\\spark-egg-roll\\config\\etl\\wanmei\\ch_sink.json"
+    val path = "D:\\dev\\cat\\spark-egg-roll\\config\\etl\\wanmei\\interact_hive_2_ch.json"
     val jsonNode = JsonReader.readFromFile(path)
     val env = new CatEnv(null,options,Map.empty)
     env.addRunner(jsonNode)

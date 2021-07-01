@@ -1,0 +1,25 @@
+{
+  "runners": [
+    {
+      "type": "ch_source",
+      "table": "(select * from $ch_table where dt='$dt') as src",
+      "url": "jdbc:clickhouse://10.6.8.39:8123",
+      "user": "root",
+      "password": "7rgbbg93lt67s3sn",
+      "sink": "tmp_$table"
+    },
+    {
+      "type": "drop_column",
+      "sql": "select * from tmp_$table ",
+      "drop_columns": [
+        "dt"
+      ],
+      "sink": "res"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "insert overwrite table $hive_table partition(dt='${dt}') select * from res",
+      "sink": "null"
+    }
+  ]
+}

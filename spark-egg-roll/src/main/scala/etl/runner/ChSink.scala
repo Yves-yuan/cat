@@ -1,6 +1,6 @@
 package etl.runner
 
-import env.CatEnv
+import etl.env.CatEnv
 
 import java.sql.DriverManager
 import java.util.Properties
@@ -82,9 +82,12 @@ class ChSink(sinkConfig: mutable.HashMap[String, String]) extends Runner {
     }
     val conn = DriverManager.getConnection(url, user, password)
     val stmt = conn.createStatement()
+    println(s"执行 $cdDdl")
     stmt.execute(cdDdl)
-    stmt.execute(dmlDropPartition)
+    println(s"执行 $ddl")
     stmt.execute(ddl)
+    println(s"执行 $dmlDropPartition")
+    stmt.execute(dmlDropPartition)
     stmt.close()
     conn.commit()
     conn.close()

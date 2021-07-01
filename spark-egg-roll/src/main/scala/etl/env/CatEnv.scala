@@ -1,4 +1,4 @@
-package env
+package etl.env
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.{ArrayNode, TextNode}
@@ -39,6 +39,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       case "drop_column" => createDropColumns(json)
       case "table_merge" => createMerge(json)
       case "ch_sink" => createChSink(json)
+      case "ch_source" => createChSource(json)
       case x => throw new Exception(s"runner type $x not supported now")
     }
   }
@@ -94,6 +95,20 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       validateArgs(x._2)
     })
     new ChSink(config)
+  }
+  private def createChSource(json: JsonNode): Runner = {
+    val config = new scala.collection.mutable.HashMap[String, String]()
+    val fs = json.fields()
+    while (fs.hasNext) {
+      val n = fs.next()
+      val v = n.getValue.asText()
+      val parsedValue = argsParser.parse(v)
+      config.put(n.getKey, parsedValue)
+    }
+    config.foreach(x=>{
+      validateArgs(x._2)
+    })
+    new ChSource(config)
   }
 
   private def createMerge(json: JsonNode): Runner = {
