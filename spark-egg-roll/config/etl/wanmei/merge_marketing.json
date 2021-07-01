@@ -1,0 +1,31 @@
+{
+  "runners": [
+    {
+      "type": "table_merge",
+      "table": "model.model_marketing_merge_df",
+      "tables": [
+        {
+          "name": "dwd.dwd_mma_marketing_promotion_df",
+          "column_prefix": "mma_marketing_promotion_"
+        },
+        {
+          "name": "dwd.dwd_mma_marketing_promotion_extend_df",
+          "column_prefix": "mma_marketing_promotion_extend_"
+        },
+        {
+          "name": "dwd.dwd_mma_marketing_coupon_code_df",
+          "column_prefix": "mma_marketing_coupon_code_"
+        },
+        {
+          "name": "dwd.dwd_mma_marketing_group_setting_df",
+          "column_prefix": "dwd_mma_marketing_group_setting_"
+        }
+      ]
+    },
+    {
+      "type": "custom_sql",
+      "sql": "insert overwrite table model.model_marketing_merge_df partition(dt = ${dt}) select a.*,b.*,c.*,d,* from (select * from dwd.dwd_mma_marketing_promotion_df a where a,dt = ${dt}) a left join (select * from dwd.dwd_mma_marketing_promotion_extend_dt b where b.dt=${dt}) b on a.id = b.promotion_id left join (select * from dwd.dwd_mma_marketing_coupon_code_df c where c.dt = ${dt}) c on a.id = c.prm_id left join (select * from dwd.dwd_mma_marketing_group_setting_df d where d.dt = ${dt}) d on a.id = d.prm_id",
+      "sink": "null"
+    }
+  ]
+}
