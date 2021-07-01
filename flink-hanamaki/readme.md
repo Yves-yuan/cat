@@ -4,7 +4,7 @@ Hanamaki url git@github.com:Yves-yuan/cat.git
 
 # Deploy
 
-## Orepare
+## Prepare
 
 * 从flink官网Apache Flink: Downloads下载flink的安装包flink-1.13.1-bin-scala_2.11.tgz，解压后是flink-1.13.1文件夹
 * 使用maven对hanamaki进行打包生成flink-hanamaki-0.5.jar
