@@ -1,0 +1,31 @@
+{
+  "runners": [
+    {
+      "type": "table_merge",
+      "table": "model.model_trade_merge_df",
+      "tables": [
+        {
+          "name": "dwd.dwd_mo_order_info_df",
+          "column_prefix": "mo_order_info_"
+        },
+        {
+          "name": "dwd.dwd_mo_order_extend_df",
+          "column_prefix": "mo_order_extend_"
+        },
+        {
+          "name": "dwd.dwd_mo_order_detail_df",
+          "column_prefix": "mo_order_detail_"
+        },
+        {
+          "name": "dwd.dwd_mo_order_promotion_df",
+          "column_prefix": "mo_order_promotion_"
+        }
+      ]
+    },
+    {
+      "type": "custom_sql",
+      "sql": "insert overwrite table model.model_trade_merge_df partition(dt='${dt}') select a.*,b.*,c.*,d.* from (select * from dwd.dwd_mo_order_info_df a where dt='${dt}') a left join (select * from dwd.dwd_mo_order_extend_df b where b.dt = '${dt}') b on a.id = b.order_id  left join (select * from dwd.dwd_mo_order_detail_df c where c.dt = '${dt}') c on a.id = c.order_id left join (select * from dwd.dwd_mo_order_promotion_df d where d.dt = '${dt}') d on a.id = d.order_id",
+      "sink": "null"
+    }
+  ]
+}

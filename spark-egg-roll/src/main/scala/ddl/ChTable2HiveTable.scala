@@ -5,6 +5,7 @@ import org.apache.spark.sql.SparkSession
 
 import java.sql.DriverManager
 import scala.annotation.tailrec
+import scala.util.Try
 import scala.util.matching.Regex
 
 object ChTable2HiveTable {
@@ -113,7 +114,9 @@ object ChTable2HiveTable {
           println("ch original table:" + ctStatement)
           println("ch new table:" + spreadCtStatement)
           println("hive new table:" + hiveStmt)
-          spark.sql(hiveStmt)
+          Try{
+            spark.sql(hiveStmt)
+          }
         }
 
       }

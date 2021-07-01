@@ -1,0 +1,57 @@
+{
+  "runners": [
+    {
+      "type": "table_merge",
+      "table": "model.model_user_merge_df",
+      "tables": [
+        {
+          "name": "dwd.dwd_mr_crm_customer_df",
+          "column_prefix": "mr_crm_customer_"
+        },
+        {
+          "name": "dwd.dwd_mr_crm_extension_df",
+          "column_prefix": "mr_crm_extension_"
+        },
+        {
+          "name": "dwd.dwd_mme_member_df",
+          "column_prefix": "mme_member_"
+        },
+        {
+          "name": "dwd.dwd_mme_member_growth_value_df",
+          "column_prefix": "mme_member_growth_value_"
+        },
+        {
+          "name": "dwd.dwd_mpo_member_points_df",
+          "column_prefix": "mpo_member_points_"
+        },
+        {
+          "name": "dwd.dwd_mme_coupon_number_member_df",
+          "column_prefix": "mme_coupon_number_member_"
+        },
+        {
+          "name": "dwd.dwd_mme_coupon_number_df",
+          "column_prefix": "mme_coupon_number_"
+        },
+        {
+          "name": "dwd.dwd_mme_coupon_df",
+          "column_prefix": "mme_coupon_"
+        }
+      ]
+    },
+    {
+      "type": "custom_sql",
+      "sql": "select a.*,b.*,c.* from (select * from dwd.dwd_mme_coupon_number_member_df  where dt='${dt}' and phone_number!='8abf50cf557512368d7e8384c3513508') a left join (select * from dwd.dwd_mme_coupon_number_df where dt='${dt}') b on a.coupon_no = b.coupon_no left join (select * from dwd.dwd_mme_coupon_df where dt ='${dt}') c on b.coupon_code = c.coupon_code",
+      "sink": "tmp_mme_coupon"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "select a.id,a.open_id,a.union_id,a.uid,a.mobile as a_mobile,a.gmt_bind,a.cus_status,a.cus_type,a.country,a.province,a.city,a.district,a.gender,a.gmt_login,a.birthday, a.cus_manager,a.remark,a.version,a.tenant_id,a.creator_name,a.gmt_create,a.gmt_modified,a.source,a.appid,a.micro_app_type, a.logout_status,a.etl_datetime,a.dt, b.*, c.*, d.*, e.* from    (select id,open_id,union_id,uid,case when mobile='8abf50cf557512368d7e8384c3513508' then concat('8abf50cf557512368d7e8384c3513508',1000+floor(1000*rand()))  else mobile end as mobile,gmt_bind,cus_status,cus_type,country,province,city,district,gender,gmt_login,birthday,cus_manager,remark,version,tenant_id,creator_name, gmt_create,gmt_modified,source,appid,micro_app_type,logout_status,etl_datetime,dt  from dwd.dwd_mr_crm_customer_df a where a.dt = '${dt}') a  left join (select * from dwd.dwd_mr_crm_extension_df b where b.dt = '${dt}')  b on a.id = b.customer_id  left join  (select * from dwd.dwd_mme_member_df c where c.dt = '${dt}') c on a.id = c.user_id  left join    (select * from dwd.dwd_mme_member_growth_value_df d where d.dt = '${dt}'and d.phone_number!='8abf50cf557512368d7e8384c3513508') d   on a.mobile = d.phone_number   left join (select * from dwd.dwd_mpo_member_points_df e where e.dt = '${dt}'   and e.phone_number!='8abf50cf557512368d7e8384c3513508') e on a.mobile = e.phone_number",
+      "sink": "tmp_user"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "insert overwrite table model.model_user_merge_df partition(dt='${dt}') select a.*,b.*  from tmp_user a left join tmp_mme_coupon b on a.a_mobile=b.phone_number",
+      "sink": "null"
+    }
+  ]
+}

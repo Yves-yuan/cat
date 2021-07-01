@@ -38,7 +38,7 @@ object EtlRunnerGo {
     val options = nextOption(Map(), args.toList)
     InputPool.inputMap = Some(options)
     println(options)
-    val spark = SparkSession.builder().appName("EtlRunnerGo")
+    val spark = SparkSession.builder()
       .enableHiveSupport()
       .getOrCreate()
     val catEnv = CatEnv.builder()

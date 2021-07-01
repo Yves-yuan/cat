@@ -2,6 +2,8 @@ package etl.runner
 
 import env.CatEnv
 
+import scala.util.Try
+
 case class TableWithColumnPrefix(tableName: String, columnPrefix: String)
 
 class TableMerge(table: String, tables: Array[TableWithColumnPrefix]) extends Runner {
@@ -39,6 +41,9 @@ class TableMerge(table: String, tables: Array[TableWithColumnPrefix]) extends Ru
     sqlBuilder += columnsSqlBuilder.result().mkString(",\n")
     sqlBuilder += tail
     println(sqlBuilder)
+    Try{
+      env.spark.sql(sqlBuilder)
+    }
   }
 
 }
