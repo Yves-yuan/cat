@@ -1,5 +1,5 @@
 # Egg-roll
-## about
+## About
 Egg-roll 包括etl模块，数据校验模块，数据仓库ddl模块
 
 etl模块通过runner_config配置runner列表，runner会串行运行
@@ -9,7 +9,7 @@ runner支持扩展，通过继承Runner特质，以及在CatEnv中解析配置�
 在RuleValidateRunner中对目标表进行校验，将校验结果写入数据库
 
 ddl模块包括一些自动化ddl操作，例如自动化建表
-## deploy
+## Deploy
 + 使用 maven 进行 compile package 生成jar包 spark-egg-roll-0.5.jar
 + 使用 mvn dependency:copy-dependencies 生成依赖包 dependency 文件夹
 + 进入服务器创建目录，将spark-egg-roll-0.5.jar，dependency 文件夹，拷入目录

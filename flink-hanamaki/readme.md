@@ -2,9 +2,9 @@
 
 Hanamaki url git@github.com:Yves-yuan/cat.git
 
-# deploy
+# Deploy
 
-## prepare
+## Orepare
 
 * 从flink官网Apache Flink: Downloads下载flink的安装包flink-1.13.1-bin-scala_2.11.tgz，解压后是flink-1.13.1文件夹
 * 使用maven对hanamaki进行打包生成flink-hanamaki-0.5.jar
@@ -14,7 +14,7 @@ Hanamaki url git@github.com:Yves-yuan/cat.git
 * 找到源码cat/flink-hanamaki 目录下的 config 目录
 * 在config目录中配置自己的校验规则xxx_rule.json
 
-## do deploy
+## Do deploy
 
 1. 进入服务器x，创建一个目录hanamaki
 
@@ -35,7 +35,7 @@ Hanamaki url git@github.com:Yves-yuan/cat.git
 
 8. 以上就是部署全部流程
 
-## rule config
+## Rule config
 
 hanamaki在启动的时候可以通过命令行参数指定规则配置文件的路径，下面我根据一个配置样例来说明如何配置校验规则。  
 克隆下来项目过后，进入cat/flink-hanamaki/config目录，打开样例custom_event_rule.json
@@ -94,7 +94,7 @@ hanamaki在启动的时候可以通过命令行参数指定规则配置文件的
 + equal代表相等类型，表示属性值必须与配置值相等。
 + match代表正则表达式匹配类型，表示属性值必须与配置的正则表达式匹配。
 
-# operation
+# Operations
 
 在运行了validator_submit.sh脚本后会向yarn集群提交一个yarn application，  
 在控制台退出后，yarn application并不会结束运行，需要手动kill，  
