@@ -56,11 +56,18 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
   }
 
   private def createCustomSql(json: JsonNode): Runner = {
-    val sql = json.get("sql").asText()
-    val sqlParsed = argsParser.parse(sql)
-    validateArgs(sqlParsed)
-    val sink = json.get("sink").asText()
-    new CustomSql(sqlParsed, sink)
+    val config = new scala.collection.mutable.HashMap[String, String]()
+    val fs = json.fields()
+    while (fs.hasNext) {
+      val n = fs.next()
+      val v = n.getValue.asText()
+      val parsedValue = argsParser.parse(v)
+      config.put(n.getKey, parsedValue)
+    }
+    config.foreach(x=>{
+      validateArgs(x._2)
+    })
+    new CustomSql(config)
   }
 
   private def createDropColumns(json: JsonNode): Runner = {
