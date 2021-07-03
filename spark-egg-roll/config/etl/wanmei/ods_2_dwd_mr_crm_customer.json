@@ -2,7 +2,7 @@
   "runners": [
     {
       "type": "column_cast",
-      "sql": "select id,open_id,union_id,uid,mobile,to_timestamp(gmt_bind,'yyyy-MM-ddHH:mm:ss') as gmt_bind,cus_status,cus_type,country,province,city,district,gender,to_timestamp(gmt_login,'yyyy-MM-ddHH:mm:ss') as gmt_login,birthday,cus_manager,remark,version,tenant_id,creator_name,to_timestamp(gmt_create,'yyyy-MM-ddHH:mm:ss') as gmt_create,to_timestamp(gmt_modified,'yyyy-MM-ddHH:mm:ss') as gmt_modified,source,appid,micro_app_type,logout_status,etl_datetime,dt from ods.ods_mr_crm_customer_di where dt=$dt",
+      "source": "select id,open_id,union_id,uid,mobile,to_timestamp(gmt_bind,'yyyy-MM-ddHH:mm:ss') as gmt_bind,cus_status,cus_type,country,province,city,district,gender,to_timestamp(gmt_login,'yyyy-MM-ddHH:mm:ss') as gmt_login,birthday,cus_manager,remark,version,tenant_id,creator_name,to_timestamp(gmt_create,'yyyy-MM-ddHH:mm:ss') as gmt_create,to_timestamp(gmt_modified,'yyyy-MM-ddHH:mm:ss') as gmt_modified,source,appid,micro_app_type,logout_status,etl_datetime,dt from ods.ods_mr_crm_customer_di where dt=$dt",
       "columns": "gmt_bind,gmt_create,gmt_modified",
       "cast_type": "timestamp",
       "sink": "tmp_1"
@@ -17,7 +17,7 @@
     },
     {
       "type": "ddl_create_table_from_df",
-      "source": "select * from tmp_2",
+      "sql": "select * from tmp_2",
       "table": "dwd.dwd_mr_crm_customer_di"
     },
     {
