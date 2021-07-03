@@ -2,12 +2,27 @@
   "runners": [
     {
       "type": "column_cast",
-      "source": "select * from ods.ods_mr_crm_customer_di",
-      "column":
+      "source": "select * from ods.ods_mr_crm_customer_di where dt=$dt",
+      "columns": "gmt_bind,gmt_create,gmt_modified",
+      "cast_type": "timestamp",
+      "sink": "tmp_1"
+    },
+    {
+      "type": "drop_column",
+      "sql": "select * from tmp_1",
+      "drop_columns": [
+        "dt"
+      ],
+      "sink": "tmp_2"
+    },
+    {
+      "type": "ddl_create_table_from_df",
+      "source": "select * from tmp_2",
+      "table": "dwd.dwd_mr_crm_customer_di"
     },
     {
       "type": "custom_sql",
-      "sql": "insert overwrite table model.model_trade_merge_df partition(dt='${dt}') select a.*,b.*,c.*,d.* from (select * from dwd.dwd_mo_order_info_df a where dt='${dt}') a left join (select * from dwd.dwd_mo_order_extend_df b where b.dt = '${dt}') b on a.id = b.order_id  left join (select * from dwd.dwd_mo_order_detail_df c where c.dt = '${dt}') c on a.id = c.order_id left join (select * from dwd.dwd_mo_order_promotion_df d where d.dt = '${dt}') d on a.id = d.order_id",
+      "sql": "insert overwrite table dwd.dwd_mr_crm_customer_di partition(dt) select *,date_format(gmt_modified,'yyyyMMdd') from tmp_2",
       "sink": "null"
     }
   ]
