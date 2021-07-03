@@ -1,7 +1,7 @@
 {
   "runners": [
     {
-      "from": "select * from ${table} where dt=${dt}",
+      "from": "select * from ${table} where dt>=${from_dt} and dt<=${to_dt}",
       "type": "ch_sink",
       "name": "$table",
       "engine": "MergeTree",

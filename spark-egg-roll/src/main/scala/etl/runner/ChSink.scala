@@ -3,7 +3,10 @@ package etl.runner
 import etl.env.CatEnv
 
 import java.sql.DriverManager
-import java.util.Properties
+import java.text.DateFormat
+import java.time.{LocalDate, LocalDateTime}
+import java.time.format.DateTimeFormatter
+import java.util.{Date, Properties}
 import scala.collection.mutable
 
 class ChSink(sinkConfig: mutable.HashMap[String, String]) extends Runner {
@@ -12,9 +15,13 @@ class ChSink(sinkConfig: mutable.HashMap[String, String]) extends Runner {
       case Some(from) => from
       case None => throw new Exception("from must be assigned")
     }
-    val dt = env.args.get('dt) match {
-      case Some(dt) => dt
-      case None => throw new Exception("dt must be assigned by --dt")
+    val from_dt = env.args.get('from_dt) match {
+      case Some(d) => d
+      case None => throw new Exception("from_dt must be assigned by --from_dt")
+    }
+    val to_dt = env.args.get('to_dt) match {
+      case Some(d) => d
+      case None => throw new Exception("to_dt must be assigned by --to_dt")
     }
     println(from)
     val df = env.spark.sql(from)
@@ -63,10 +70,6 @@ class ChSink(sinkConfig: mutable.HashMap[String, String]) extends Runner {
       s"""
          |create database if not exists $db
          |""".stripMargin
-    val dmlDropPartition =
-      s"""
-         |alter table $chTableName drop partition '$dt'
-         |""".stripMargin
     Class.forName("ru.yandex.clickhouse.ClickHouseDriver")
     val url = sinkConfig.get("url") match {
       case Some(url) => url
@@ -86,8 +89,20 @@ class ChSink(sinkConfig: mutable.HashMap[String, String]) extends Runner {
     stmt.execute(cdDdl)
     println(s"执行 $ddl")
     stmt.execute(ddl)
-    println(s"执行 $dmlDropPartition")
-    stmt.execute(dmlDropPartition)
+    val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+    val fromDt = LocalDate.parse(from_dt.toString,formatter)
+    val toDt = LocalDate.parse(to_dt.toString,formatter)
+    var iteratorDt = fromDt
+    while(!iteratorDt.isAfter(toDt)){
+      val iDt = iteratorDt.format(formatter)
+      val dmlDropPartition =
+        s"""
+           |alter table $chTableName drop partition '$iDt'
+           |""".stripMargin
+      println(s"执行 $dmlDropPartition")
+      stmt.execute(dmlDropPartition)
+      iteratorDt = iteratorDt.plusDays(1)
+    }
     stmt.close()
     conn.commit()
     conn.close()
