@@ -4,133 +4,14 @@
     {
       "type": "column_cast",
       "source": "select * from ods.ods_mo_order_info_di where dt=$dt",
-      "column":"total_amount",
-      "cast_type":"decimal",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from ods.ods_mo_order_info_di where dt=$dt",
-      "column":"sku_amount",
-      "cast_type":"decimal",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from ods.ods_mo_order_info_di where dt=$dt",
-      "column":"freight_amount",
-      "cast_type":"decimal",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from ods.ods_mo_order_info_di where dt=$dt",
-      "column":"freight_amount",
-      "cast_type":"decimal",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from ods.ods_mo_order_info_di where dt=$dt",
-      "column":"promotion_amount",
-      "cast_type":"decimal",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from ods.ods_mo_order_info_di where dt=$dt",
-      "column":"coupon_amount",
-      "cast_type":"decimal",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from ods.ods_mo_order_info_di where dt=$dt",
-      "column":"voucher_amount",
-      "cast_type":"decimal",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from ods.ods_mo_order_info_di where dt=$dt",
-      "column":"points_amount",
-      "cast_type":"decimal",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from ods.ods_mo_order_info_di where dt=$dt",
-      "column":"pay_amount",
-      "cast_type":"decimal",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from ods.ods_mo_order_info_di where dt=$dt",
-      "column":"down_pay_amount",
-      "cast_type":"decimal",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from ods.ods_mo_order_info_di where dt=$dt",
-      "column":"final_pay_amount",
-      "cast_type":"decimal",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from ods.ods_mo_order_info_di where dt=$dt",
-      "column":"unpaid_amt",
+      "columns":"total_amount,sku_amount,freight_amount,promotion_amount,coupon_amount,voucher_amount,points_amount,pay_amount,down_pay_amount,final_pay_amount,unpaid_amt",
       "cast_type":"decimal",
       "sink":"tmp_1"
     },
     {
       "type": "column_cast",
       "source": "select * from tmp_1",
-      "column":"gmt_create",
-      "cast_type":"timestamp",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from tmp_1",
-      "column":"gmt_modified",
-      "cast_type":"timestamp",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from tmp_1",
-      "column":"pay_time",
-      "cast_type":"timestamp",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from tmp_1",
-      "column":"down_pay_time",
-      "cast_type":"timestamp",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from tmp_1",
-      "column":"gmt_send",
-      "cast_type":"timestamp",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from tmp_1",
-      "column":"gmt_create",
-      "cast_type":"timestamp",
-      "sink":"tmp_1"
-    },
-    {
-      "type": "column_cast",
-      "source": "select * from tmp_1",
-      "column":"gmt_modified",
+      "columns":"pay_time,down_pay_time,gmt_send,gmt_create,gmt_modified,pay_duetime,refund_duetime,confirm_duetime,gmt_prepared",
       "cast_type":"timestamp",
       "sink":"tmp_1"
     },
