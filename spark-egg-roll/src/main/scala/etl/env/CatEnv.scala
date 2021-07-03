@@ -40,6 +40,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       case "table_merge" => createMerge(json)
       case "ch_sink" => createChSink(json)
       case "ch_source" => createChSource(json)
+      case "column_cast" => createColumnCast(json)
       case x => throw new Exception(s"runner type $x not supported now")
     }
   }
@@ -95,6 +96,22 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       validateArgs(x._2)
     })
     new ChSink(config)
+  }
+
+
+  private def createColumnCast(json: JsonNode): Runner = {
+    val jsonConfig = new scala.collection.mutable.HashMap[String, String]()
+    val fs = json.fields()
+    while (fs.hasNext) {
+      val n = fs.next()
+      val v = n.getValue.asText()
+      val parsedValue = argsParser.parse(v)
+      jsonConfig.put(n.getKey, parsedValue)
+    }
+    jsonConfig.foreach(x=>{
+      validateArgs(x._2)
+    })
+    new ColumnCast(jsonConfig)
   }
   private def createChSource(json: JsonNode): Runner = {
     val config = new scala.collection.mutable.HashMap[String, String]()

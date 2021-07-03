@@ -1,0 +1,14 @@
+{
+  "runners": [
+    {
+      "type": "column_cast",
+      "source": "select * from ods.ods_mr_crm_customer_di",
+      "column":
+    },
+    {
+      "type": "custom_sql",
+      "sql": "insert overwrite table model.model_trade_merge_df partition(dt='${dt}') select a.*,b.*,c.*,d.* from (select * from dwd.dwd_mo_order_info_df a where dt='${dt}') a left join (select * from dwd.dwd_mo_order_extend_df b where b.dt = '${dt}') b on a.id = b.order_id  left join (select * from dwd.dwd_mo_order_detail_df c where c.dt = '${dt}') c on a.id = c.order_id left join (select * from dwd.dwd_mo_order_promotion_df d where d.dt = '${dt}') d on a.id = d.order_id",
+      "sink": "null"
+    }
+  ]
+}
