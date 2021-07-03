@@ -1,0 +1,37 @@
+{
+  "runners": [
+
+    {
+      "type": "column_cast",
+      "source": "select * from ods.ods_mr_crm_extension_di where dt=$dt",
+      "columns":"customer_account_amount,customer_order_amount,customer_refund_order_amount",
+      "cast_type":"decimal",
+      "sink":"tmp_1"
+    },
+    {
+      "type": "column_cast",
+      "source": "select * from tmp_1",
+      "columns":"gmt_vip,gmt_last_order,gmt_create,gmt_modified",
+      "cast_type":"timestamp",
+      "sink":"tmp_1"
+    },
+    {
+      "type": "drop_column",
+      "sql": "select * from tmp_1",
+      "drop_columns": [
+        "dt"
+      ],
+      "sink": "tmp_2"
+    },
+    {
+      "type": "ddl_create_table_from_df",
+      "sql": "select * from tmp_2",
+      "table": "dwd.dwd_mr_crm_extension_di"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "insert overwrite table dwd.dwd_mr_crm_extension_di partition(dt) select *,from_unixtime(gmt_modified,'yyyyMMdd') from tmp_2",
+      "sink": "null"
+    }
+  ]
+}
