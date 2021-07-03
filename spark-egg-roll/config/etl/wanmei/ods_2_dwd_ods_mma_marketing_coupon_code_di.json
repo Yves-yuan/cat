@@ -3,7 +3,7 @@
 
     {
       "type": "column_sql",
-      "source": "select * from ods.ods_mma_marketing_coupon_code_di where dt=$dt",
+      "source": "select * from ods.ods_mma_marketing_coupon_code_di where dt<=$dt",
       "sink":"tmp_1"
     },
     {
@@ -14,10 +14,16 @@
       "sink":"tmp_1"
     },
     {
+      "type": "custom_sql",
+      "sql": "select row_number() over (partition by id order by dt desc) as row_number,* from tmp_1",
+      "sink": "tmp_1"
+    },
+    {
       "type": "drop_column",
       "sql": "select * from tmp_1",
       "drop_columns": [
-        "dt"
+        "dt",
+        "row_number"
       ],
       "sink": "tmp_2"
     },

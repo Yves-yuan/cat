@@ -2,16 +2,22 @@
   "runners": [
     {
       "type": "column_cast",
-      "source": "select * from ods.ods_mr_crm_customer_login_log_di where dt=$dt",
+      "source": "select * from ods.ods_mr_crm_customer_login_log_di where dt<=$dt",
       "columns": "gmt_create",
       "cast_type": "timestamp",
+      "sink": "tmp_1"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "select row_number() over (partition by id order by dt desc) as row_number,* from tmp_1",
       "sink": "tmp_1"
     },
     {
       "type": "drop_column",
       "sql": "select * from tmp_1",
       "drop_columns": [
-        "dt"
+        "dt",
+        "row_number"
       ],
       "sink": "tmp_2"
     },
