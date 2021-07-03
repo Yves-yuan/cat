@@ -7,15 +7,15 @@ import scala.util.Try
 
 class CreateTableFromDf(sourceConfig: mutable.HashMap[String, String]) extends Runner {
   override def run(env: CatEnv): Unit = {
-    val source = sourceConfig.get("source") match {
+    val sql = sourceConfig.get("sql") match {
       case Some(d) => d
-      case None => throw new Exception("source must be assigned in config")
+      case None => throw new Exception("sql must be assigned in config")
     }
     val table = sourceConfig.get("table") match {
       case Some(d) => d
       case None => throw new Exception("table must be assigned in config")
     }
-    val df = env.spark.sql(source)
+    val df = env.spark.sql(sql)
     val head =
       s"""
          |create table if not exists $table
@@ -40,10 +40,10 @@ class CreateTableFromDf(sourceConfig: mutable.HashMap[String, String]) extends R
     df.schema.foreach(sf => {
       columnsSqlBuilder += s"${sf.name} ${sf.dataType.typeName}"
     })
-    val sql = head + columnsSqlBuilder.result().mkString(",\n") + tail
-    println(sql)
+    val stmt = head + columnsSqlBuilder.result().mkString(",\n") + tail
+    println(stmt)
     Try{
-      env.spark.sql(sql)
+      env.spark.sql(stmt)
     }
   }
 }

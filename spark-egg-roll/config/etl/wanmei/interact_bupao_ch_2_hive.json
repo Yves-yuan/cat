@@ -6,11 +6,11 @@
       "url": "jdbc:clickhouse://10.6.8.39:8123",
       "user": "root",
       "password": "7rgbbg93lt67s3sn",
-      "sink": "tmp_$table"
+      "sink": "tmp"
     },
     {
       "type": "custom_sql",
-      "sql": "insert overwrite table $hive_table partition(dt) select * from tmp_$table",
+      "sql": "insert overwrite table $hive_table partition(dt) select * from tmp",
       "sink": "null"
     }
   ]
