@@ -24,6 +24,11 @@
       "sink": "tmp_2"
     },
     {
+      "type": "ddl_create_table_from_df",
+      "sql": "select * from tmp_2",
+      "table": "dwd.dwd_mo_order_info_di"
+    },
+    {
       "type": "custom_sql",
       "sql": "insert overwrite table dwd.dwd_mo_order_info_di partition(dt) select *,from_unixtime(gmt_modified,'yyyyMMdd') from tmp_2",
       "sink": "null"
