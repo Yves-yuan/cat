@@ -26,8 +26,14 @@
       "table": "dwd.dwd_mme_member_di"
     },
     {
+      "type": "repartition",
+      "sql": "select *,date_format(gmt_modified,'yyyyMMdd') as dt from tmp_3",
+      "partition_key": "dt",
+      "sink": "tmp_4"
+    },
+    {
       "type": "custom_sql",
-      "sql": "insert overwrite table dwd.dwd_mme_member_di partition(dt) select *,from_unixtime(gmt_modified,'yyyyMMdd') from tmp_3",
+      "sql": "insert overwrite table dwd.dwd_mme_member_di partition(dt) select * from tmp_4",
       "sink": "null"
     }
   ]

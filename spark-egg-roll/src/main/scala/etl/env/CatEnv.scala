@@ -42,6 +42,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       case "ch_source" => createChSource(json)
       case "column_cast" => createColumnCast(json)
       case "ddl_create_table_from_df" => createCreateTableFromDf(json)
+      case "repartition" => createRepartition(json)
       case x => throw new Exception(s"runner type $x not supported now")
     }
   }
@@ -64,7 +65,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       val parsedValue = argsParser.parse(v)
       config.put(n.getKey, parsedValue)
     }
-    config.foreach(x=>{
+    config.foreach(x => {
       validateArgs(x._2)
     })
     new CustomSql(config)
@@ -100,12 +101,26 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       val parsedValue = argsParser.parse(v)
       config.put(n.getKey, parsedValue)
     }
-    config.foreach(x=>{
+    config.foreach(x => {
       validateArgs(x._2)
     })
     new ChSink(config)
   }
 
+  private def createRepartition(json: JsonNode): Runner = {
+    val jsonConfig = new scala.collection.mutable.HashMap[String, String]()
+    val fs = json.fields()
+    while (fs.hasNext) {
+      val n = fs.next()
+      val v = n.getValue.asText()
+      val parsedValue = argsParser.parse(v)
+      jsonConfig.put(n.getKey, parsedValue)
+    }
+    jsonConfig.foreach(x => {
+      validateArgs(x._2)
+    })
+    new Repartition(jsonConfig)
+  }
 
   private def createCreateTableFromDf(json: JsonNode): Runner = {
     val jsonConfig = new scala.collection.mutable.HashMap[String, String]()
@@ -116,11 +131,12 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       val parsedValue = argsParser.parse(v)
       jsonConfig.put(n.getKey, parsedValue)
     }
-    jsonConfig.foreach(x=>{
+    jsonConfig.foreach(x => {
       validateArgs(x._2)
     })
     new CreateTableFromDf(jsonConfig)
   }
+
   private def createColumnCast(json: JsonNode): Runner = {
     val jsonConfig = new scala.collection.mutable.HashMap[String, String]()
     val fs = json.fields()
@@ -130,11 +146,12 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       val parsedValue = argsParser.parse(v)
       jsonConfig.put(n.getKey, parsedValue)
     }
-    jsonConfig.foreach(x=>{
+    jsonConfig.foreach(x => {
       validateArgs(x._2)
     })
     new ColumnCast(jsonConfig)
   }
+
   private def createChSource(json: JsonNode): Runner = {
     val config = new scala.collection.mutable.HashMap[String, String]()
     val fs = json.fields()
@@ -144,7 +161,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       val parsedValue = argsParser.parse(v)
       config.put(n.getKey, parsedValue)
     }
-    config.foreach(x=>{
+    config.foreach(x => {
       validateArgs(x._2)
     })
     new ChSource(config)

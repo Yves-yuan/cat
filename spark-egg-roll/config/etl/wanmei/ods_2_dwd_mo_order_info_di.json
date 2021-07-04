@@ -35,8 +35,14 @@
       "table": "dwd.dwd_mo_order_info_di"
     },
     {
+      "type": "repartition",
+      "sql": "select *,date_format(gmt_modified,'yyyyMMdd') as dt from tmp_4",
+      "partition_key": "dt",
+      "sink": "tmp_5"
+    },
+    {
       "type": "custom_sql",
-      "sql": "insert overwrite table dwd.dwd_mo_order_info_di partition(dt) select *,date_format(gmt_modified,'yyyyMMdd') from tmp_4",
+      "sql": "insert overwrite table dwd.dwd_mo_order_info_di partition(dt) select * from tmp_5",
       "sink": "null"
     }
   ]

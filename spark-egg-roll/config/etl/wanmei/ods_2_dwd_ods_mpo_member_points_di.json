@@ -33,8 +33,14 @@
       "table": "dwd.dwd_mpo_member_points_di"
     },
     {
+      "type": "repartition",
+      "sql": "select *,date_format(gmt_modified,'yyyyMMdd') as dt from tmp_4",
+      "partition_key": "dt",
+      "sink": "tmp_5"
+    },
+    {
       "type": "custom_sql",
-      "sql": "insert overwrite table dwd.dwd_mpo_member_points_di partition(dt) select *,date_format(update_time,'yyyyMMdd') from tmp_4",
+      "sql": "insert overwrite table dwd.dwd_mpo_member_points_di partition(dt) select * from tmp_5",
       "sink": "null"
     }
   ]
