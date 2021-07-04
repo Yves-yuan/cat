@@ -2,7 +2,7 @@
   "runners": [
 
     {
-      "type": "column_sql",
+      "type": "custom_sql",
       "source": "select * from ods.ods_mme_member_di where dt<=$dt",
       "sink":"tmp_1"
     },
@@ -27,7 +27,7 @@
     },
     {
       "type": "repartition",
-      "sql": "select *,date_format(gmt_modified,'yyyyMMdd') as dt from tmp_3",
+      "sql": "select *,date_format(etl_datetime,'yyyyMMdd') as dt from tmp_3",
       "partition_key": "dt",
       "sink": "tmp_4"
     },
