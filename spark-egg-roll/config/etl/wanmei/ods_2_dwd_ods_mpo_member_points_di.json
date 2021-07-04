@@ -11,30 +11,30 @@
       "source": "select * from tmp_1",
       "columns":"created_time,update_time",
       "cast_type":"timestamp",
-      "sink":"tmp_1"
+      "sink":"tmp_2"
     },
     {
       "type": "custom_sql",
-      "sql": "select row_number() over (partition by id order by dt desc) as row_number,* from tmp_1",
-      "sink": "tmp_2"
+      "sql": "select row_number() over (partition by id order by dt desc) as row_number,* from tmp_2",
+      "sink": "tmp_3"
     },
     {
       "type": "drop_column",
-      "sql": "select * from tmp_2",
+      "sql": "select * from tmp_3",
       "drop_columns": [
         "dt",
         "row_number"
       ],
-      "sink": "tmp_3"
+      "sink": "tmp_4"
     },
     {
       "type": "ddl_create_table_from_df",
-      "sql": "select * from tmp_3",
+      "sql": "select * from tmp_4",
       "table": "dwd.dwd_mpo_member_points_di"
     },
     {
       "type": "custom_sql",
-      "sql": "insert overwrite table dwd.dwd_mpo_member_points_di partition(dt) select *,date_format(update_time,'yyyyMMdd') from tmp_3",
+      "sql": "insert overwrite table dwd.dwd_mpo_member_points_di partition(dt) select *,date_format(update_time,'yyyyMMdd') from tmp_4",
       "sink": "null"
     }
   ]
