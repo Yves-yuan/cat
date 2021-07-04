@@ -3,7 +3,7 @@
 
     {
       "type": "custom_sql",
-      "source": "select * from ods.ods_mme_member_di where dt<=$dt",
+      "sql": "select * from ods.ods_mme_member_di where dt<=$dt",
       "sink":"tmp_1"
     },
     {
