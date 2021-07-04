@@ -18,25 +18,25 @@
     {
       "type": "custom_sql",
       "sql": "select row_number() over (partition by id order by dt desc) as row_number,* from tmp_1",
-      "sink": "tmp_1"
+      "sink": "tmp_2"
     },
     {
       "type": "drop_column",
-      "sql": "select * from tmp_1",
+      "sql": "select * from tmp_2 where row_number=1",
       "drop_columns": [
         "dt",
         "row_number"
       ],
-      "sink": "tmp_2"
+      "sink": "tmp_3"
     },
     {
       "type": "ddl_create_table_from_df",
-      "sql": "select * from tmp_2",
+      "sql": "select * from tmp_3",
       "table": "dwd.dwd_mo_order_detail_di"
     },
     {
       "type": "custom_sql",
-      "sql": "insert overwrite table dwd.dwd_mo_order_detail_di partition(dt) select *,date_format(gmt_modified,'yyyyMMdd') from tmp_2",
+      "sql": "insert overwrite table dwd.dwd_mo_order_detail_di partition(dt) select *,date_format(gmt_modified,'yyyyMMdd') from tmp_3",
       "sink": "null"
     }
   ]
