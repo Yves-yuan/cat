@@ -28,7 +28,7 @@
     },
     {
       "type": "repartition",
-      "sql": "select *,date_format(gmt_modified,'yyyyMMdd') as dt from tmp_3",
+      "sql": "select *,date_format(gmt_create,'yyyyMMdd') as dt from tmp_3",
       "partition_key": "dt",
       "sink": "tmp_4"
     },

@@ -3,7 +3,7 @@
 
     {
       "type": "column_cast",
-      "source": "select * from ods.ods_mma_marketing_promotion_extend_df where dt=$dt",
+      "source": "select * from ods.ods_mma_marketing_group_setting_df where dt=$dt",
       "columns":"gmt_create,gmt_modified",
       "cast_type":"timestamp",
       "sink":"tmp_1"
@@ -19,11 +19,11 @@
     {
       "type": "ddl_create_table_from_df",
       "sql": "select * from tmp_2",
-      "table": "dwd.dwd_mma_marketing_promotion_extend_df"
+      "table": "dwd.dwd_mma_marketing_group_setting_df"
     },
     {
       "type": "custom_sql",
-      "sql": "insert overwrite table dwd.dwd_mma_marketing_promotion_extend_df partition(dt = ${dt}) select * from tmp_2",
+      "sql": "insert overwrite table dwd.dwd_mma_marketing_group_setting_df partition(dt = ${dt}) select * from tmp_2",
       "sink": "null"
     }
   ]

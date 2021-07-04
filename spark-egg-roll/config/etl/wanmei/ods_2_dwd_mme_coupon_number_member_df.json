@@ -2,10 +2,8 @@
   "runners": [
 
     {
-      "type": "column_cast",
-      "source": "select * from ods.ods_mma_marketing_promotion_df where dt=$dt",
-      "columns":"gmt_create,gmt_modified",
-      "cast_type":"timestamp",
+      "type": "custom_sql",
+      "sql": "select * from ods.ods_mme_coupon_number_member_df where dt=$dt",
       "sink":"tmp_1"
     },
     {
@@ -19,11 +17,11 @@
     {
       "type": "ddl_create_table_from_df",
       "sql": "select * from tmp_2",
-      "table": "dwd.dwd_mma_marketing_promotion_df"
+      "table": "dwd.dwd_mme_coupon_number_member_df"
     },
     {
       "type": "custom_sql",
-      "sql": "insert overwrite table dwd.dwd_mma_marketing_promotion_df partition(dt='$dt') select * from tmp_2",
+      "sql": "insert overwrite table dwd.dwd_mme_coupon_number_member_df partition(dt = ${dt}) select * from tmp_2",
       "sink": "null"
     }
   ]
