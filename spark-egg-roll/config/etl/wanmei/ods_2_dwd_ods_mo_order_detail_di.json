@@ -5,7 +5,7 @@
       "type": "column_cast",
       "source": "select * from ods.ods_mo_order_detail_di where dt<=$dt",
       "columns":"promotion_amount,coupon_amount,points_amount,binder_points_amount,voucher_amount,real_amount",
-      "cast_type":"decimal",
+      "cast_type":"decimal(12,4)",
       "sink":"tmp_1"
     },
     {
@@ -36,7 +36,7 @@
     },
     {
       "type": "custom_sql",
-      "sql": "insert overwrite table dwd.dwd_mo_order_detail_di partition(dt) select *,from_unixtime(gmt_modified,'yyyyMMdd') from tmp_2",
+      "sql": "insert overwrite table dwd.dwd_mo_order_detail_di partition(dt) select *,date_format(gmt_modified,'yyyyMMdd') from tmp_2",
       "sink": "null"
     }
   ]
