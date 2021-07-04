@@ -5,7 +5,7 @@
       "type": "column_cast",
       "source": "select * from ods.ods_mr_crm_extension_di where dt<=$dt",
       "columns":"customer_account_amount,customer_order_amount,customer_refund_order_amount",
-      "cast_type":"decimal",
+      "cast_type":"decimal(12,4)",
       "sink":"tmp_1"
     },
     {

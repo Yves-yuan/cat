@@ -5,7 +5,7 @@
       "type": "column_cast",
       "source": "select * from ods.ods_mo_order_info_di where dt<=$dt",
       "columns":"total_amount,sku_amount,freight_amount,promotion_amount,coupon_amount,voucher_amount,points_amount,pay_amount,down_pay_amount,final_pay_amount,unpaid_amt",
-      "cast_type":"decimal",
+      "cast_type":"decimal(12,4)",
       "sink":"tmp_1"
     },
     {

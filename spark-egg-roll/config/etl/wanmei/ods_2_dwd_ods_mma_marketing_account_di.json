@@ -5,7 +5,7 @@
       "type": "column_cast",
       "source": "select * from ods.ods_mma_marketing_account_di where dt<=$dt",
       "columns":"disprice,max_random_value,min_random_value",
-      "cast_type":"decimal",
+      "cast_type":"decimal(12,4)",
       "sink":"tmp_1"
     },
     {
