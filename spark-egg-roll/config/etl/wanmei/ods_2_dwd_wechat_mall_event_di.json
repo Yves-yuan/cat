@@ -3,8 +3,8 @@
 
     {
       "type": "column_cast",
-      "source": "select * from ods.ods_wechat_mall_event_di where dt<=$dt",
-      "columns":"pay_time,message_times",
+      "source": "select * from ods.ods_wechat_mall_event_di where dt<=$dt and dt >=date_format(date_add(to_timestamp('$dt','yyyyMMdd'),-3),'yyyyMMdd')",
+      "columns":"datetime,message_times",
       "cast_type":"timestamp",
       "sink":"tmp_1"
     },
