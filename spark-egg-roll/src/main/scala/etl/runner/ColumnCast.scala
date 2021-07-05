@@ -9,7 +9,10 @@ class ColumnCast(sourceConfig: mutable.HashMap[String, String]) extends Runner {
   override def run(env: CatEnv): Unit = {
     val source = sourceConfig.get("source") match {
       case Some(d) => d
-      case None => throw new Exception("source must be assigned in config")
+      case None => sourceConfig.get("sql") match {
+        case Some(d) => d
+        case None => throw new Exception("source or sql must be assigned in config")
+      }
     }
     val columns = sourceConfig.get("columns") match {
       case Some(d) => d
