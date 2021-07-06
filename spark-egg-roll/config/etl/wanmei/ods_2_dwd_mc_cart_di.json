@@ -1,0 +1,47 @@
+{
+  "runners": [
+
+    {
+      "type": "custom_sql",
+      "sql": "select * from ods.ods_mc_cart_di where dt<=$dt",
+      "sink":"tmp_1"
+    },
+    {
+      "type": "column_cast",
+      "source": "select * from tmp_1",
+      "columns":"gmt_create,gmt_modified",
+      "cast_type":"timestamp",
+      "sink":"tmp_2"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "select row_number() over (partition by id order by dt desc) as row_number,* from tmp_2",
+      "sink": "tmp_3"
+    },
+    {
+      "type": "drop_column",
+      "sql": "select * from tmp_3 where row_number=1",
+      "drop_columns": [
+        "dt",
+        "row_number"
+      ],
+      "sink": "tmp_4"
+    },
+    {
+      "type": "ddl_create_table_from_df",
+      "sql": "select * from tmp_4",
+      "table": "dwd.dwd_mc_cart_di"
+    },
+    {
+      "type": "repartition",
+      "sql": "select *,date_format(gmt_modified,'yyyyMMdd') as dt from tmp_4",
+      "partition_key": "dt",
+      "sink": "tmp_5"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "insert overwrite table dwd.dwd_mc_cart_di partition(dt) select * from tmp_5",
+      "sink": "null"
+    }
+  ]
+}
