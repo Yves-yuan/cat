@@ -23,6 +23,11 @@
     },
     {
       "type": "custom_sql",
+      "sql": "truncate table dwd.dwd_mma_marketing_promotion_extend_df",
+      "sink": "null"
+    },
+    {
+      "type": "custom_sql",
       "sql": "insert overwrite table dwd.dwd_mma_marketing_promotion_extend_df partition(dt = ${dt}) select * from tmp_2",
       "sink": "null"
     }
