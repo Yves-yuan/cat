@@ -43,6 +43,8 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       case "column_cast" => createColumnCast(json)
       case "ddl_create_table_from_df" => createCreateTableFromDf(json)
       case "repartition" => createRepartition(json)
+      case "parquet_source" => createParquet(json)
+      case "ch_save_table_sink" => createChSaveAsTableSink(json)
       case x => throw new Exception(s"runner type $x not supported now")
     }
   }
@@ -105,6 +107,34 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       validateArgs(x._2)
     })
     new ChSink(config)
+  }
+  private def createChSaveAsTableSink(json: JsonNode): Runner = {
+    val config = new scala.collection.mutable.HashMap[String, String]()
+    val fs = json.fields()
+    while (fs.hasNext) {
+      val n = fs.next()
+      val v = n.getValue.asText()
+      val parsedValue = argsParser.parse(v)
+      config.put(n.getKey, parsedValue)
+    }
+    config.foreach(x => {
+      validateArgs(x._2)
+    })
+    new ChSaveAsTableSink(config)
+  }
+  private def createParquet(json: JsonNode): Runner = {
+    val config = new scala.collection.mutable.HashMap[String, String]()
+    val fs = json.fields()
+    while (fs.hasNext) {
+      val n = fs.next()
+      val v = n.getValue.asText()
+      val parsedValue = argsParser.parse(v)
+      config.put(n.getKey, parsedValue)
+    }
+    config.foreach(x => {
+      validateArgs(x._2)
+    })
+    new ParquetSource(config)
   }
 
   private def createRepartition(json: JsonNode): Runner = {
