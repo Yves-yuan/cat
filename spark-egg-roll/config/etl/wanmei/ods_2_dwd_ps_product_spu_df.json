@@ -1,0 +1,35 @@
+{
+  "runners": [
+
+    {
+      "type": "column_cast",
+      "source": "select * from ods.ods_ps_product_spu_df where dt=$dt",
+      "columns":"created_time,update_time",
+      "cast_type":"timestamp",
+      "sink":"tmp_1"
+    },
+    {
+      "type": "drop_column",
+      "sql": "select * from tmp_1 where brand_code not in ('WL')",
+      "drop_columns": [
+        "dt"
+      ],
+      "sink": "tmp_2"
+    },
+    {
+      "type": "ddl_create_table_from_df",
+      "sql": "select * from tmp_2",
+      "table": "dwd.dwd_ps_product_spu_df"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "truncate table dwd.dwd_ps_product_spu_df",
+      "sink": "null"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "insert overwrite table dwd.dwd_ps_product_spu_df partition(dt='$dt') select * from tmp_2",
+      "sink": "null"
+    }
+  ]
+}
