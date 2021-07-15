@@ -42,6 +42,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       case "ch_source" => createChSource(json)
       case "column_cast" => createColumnCast(json)
       case "ddl_create_table_from_df" => createCreateTableFromDf(json)
+      case "ddl_create_table_from_df_without_dt" => createCreateTableFromDfWithoutDt(json)
       case "repartition" => createRepartition(json)
       case "parquet_source" => createParquet(json)
       case "ch_save_table_sink" => createChSaveAsTableSink(json)
@@ -152,6 +153,20 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
     new Repartition(jsonConfig)
   }
 
+  private def createCreateTableFromDfWithoutDt(json: JsonNode): Runner = {
+    val jsonConfig = new scala.collection.mutable.HashMap[String, String]()
+    val fs = json.fields()
+    while (fs.hasNext) {
+      val n = fs.next()
+      val v = n.getValue.asText()
+      val parsedValue = argsParser.parse(v)
+      jsonConfig.put(n.getKey, parsedValue)
+    }
+    jsonConfig.foreach(x => {
+      validateArgs(x._2)
+    })
+    new CreateTableFromDfWithoutDt(jsonConfig)
+  }
   private def createCreateTableFromDf(json: JsonNode): Runner = {
     val jsonConfig = new scala.collection.mutable.HashMap[String, String]()
     val fs = json.fields()
