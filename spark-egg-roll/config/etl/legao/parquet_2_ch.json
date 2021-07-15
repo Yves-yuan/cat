@@ -7,7 +7,7 @@
     },
     {
       "type": "ch_save_table_sink",
-      "sql": "select * from tmp1",
+      "sql": "select *,now() as cdp_modify_time,'$dt' as pt from tmp1",
       "name": "$name",
       "url": "jdbc:clickhouse://ip-172-20-37-44.cn-northwest-1.compute.internal:8123",
       "user": "root",
