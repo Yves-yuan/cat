@@ -1,0 +1,44 @@
+{
+  "runners": [
+    {
+      "type": "ch_source",
+      "table": "(select * from system.columns ) as src",
+      "url": "jdbc:clickhouse://ip-172-20-37-44.cn-northwest-1.compute.internal:8123",
+      "user": "root",
+      "password": "3v48ru8u2heuq4qr",
+      "sink": "tmp1"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "select database,table,name,now() as create_date from tmp1",
+      "sink": "tmp2"
+    },
+    {
+      "type": "ch_save_table_sink",
+      "sql": "select * from tmp2",
+      "name": "meta.tech_meta_table",
+      "order_by": "(database,table)",
+      "url": "jdbc:clickhouse://ip-172-20-37-44.cn-northwest-1.compute.internal:8123",
+      "user": "root",
+      "password": "3v48ru8u2heuq4qr"
+    },
+    {
+      "type": "ch_source",
+      "table": "(select database,table,rows,data_compressed_bytes,data_uncompressed_bytes from system.parts ) as src",
+      "url": "jdbc:clickhouse://ip-172-20-37-44.cn-northwest-1.compute.internal:8123",
+      "user": "root",
+      "password": "3v48ru8u2heuq4qr",
+      "sink": "tmp3"
+    },
+    {
+      "type": "ch_save_table_sink",
+      "sql": "select database,table,sum(rows) as size,sum(data_compressed_bytes) as data_compressed_bytes,sum(data_uncompressed_bytes) as data_uncompressed_bytes,'$pt' as pt from tmp3 group by database,table",
+      "name": "meta.tables_information_table",
+      "partition_key": "pt",
+      "order_by": "(database,table)",
+      "url": "jdbc:clickhouse://ip-172-20-37-44.cn-northwest-1.compute.internal:8123",
+      "user": "root",
+      "password": "3v48ru8u2heuq4qr"
+    }
+  ]
+}
