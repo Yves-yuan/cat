@@ -8,28 +8,35 @@
       "cast_type":"timestamp",
       "sink":"tmp_1"
     },
+
     {
-      "type": "drop_column",
-      "sql": "select * from tmp_1 where event !='' or event is not null",
-      "drop_columns": [
-        "dt"
-      ],
+      "type": "custom_sql",
+      "sql": "select row_number() over (partition by event,appid,datetime,distinct_id order by datetime desc) as row_number,* from tmp_1",
       "sink": "tmp_2"
     },
     {
+      "type": "drop_column",
+      "sql": "select * from tmp_2 where row_number=1 and event is not null",
+      "drop_columns": [
+        "dt",
+        "row_number"
+      ],
+      "sink": "tmp_3"
+    },
+    {
       "type": "ddl_create_table_from_df",
-      "sql": "select * from tmp_2",
+      "sql": "select * from tmp_3",
       "table": "dwd.dwd_wechat_mall_event_di"
     },
     {
       "type": "repartition",
-      "sql": "select *,partition_col as dt from tmp_2",
+      "sql": "select *,partition_col as dt from tmp_3",
       "partition_key": "dt",
-      "sink": "tmp_3"
+      "sink": "tmp_4"
     },
     {
       "type": "custom_sql",
-      "sql": "insert overwrite table dwd.dwd_wechat_mall_event_di partition(dt) select * from tmp_3",
+      "sql": "insert overwrite table dwd.dwd_wechat_mall_event_di partition(dt) select * from tmp_4",
       "sink": "null"
     }
   ]
