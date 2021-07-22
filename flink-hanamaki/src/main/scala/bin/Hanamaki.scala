@@ -1,17 +1,14 @@
 package bin
 
-import com.twitter.chill.protobuf.ProtobufSerializer
-import io.growing.collector.tunnel.protocol.EventDto
-import org.apache.flink.api.scala.createTypeInformation
+import input.InputPool
+import json.JsonReader
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.{FileSystem, Path}
-import org.slf4j.LoggerFactory
-import rule.RuleFactory
-import sink.KafkaSinkFactory
-import source.KafkaSourceFactory
+import org.apache.flink.table.api.EnvironmentSettings
+import org.apache.flink.table.api.bridge.scala.StreamTableEnvironment
+import org.slf4j.{Logger, LoggerFactory}
+import runner.CatEnv
 
-import java.net.{InetAddress, NetworkInterface, URI}
+import java.net.{InetAddress, NetworkInterface}
 import scala.annotation.tailrec
 import scala.collection.JavaConverters.enumerationAsScalaIteratorConverter
 import scala.sys.exit
@@ -19,12 +16,12 @@ import scala.sys.exit
 object Hanamaki {
   val usage =
     """
-    Usage: Hanamaki [--rule custom_event_rule.json --source source.json --sink sink.json]
+    Usage: Hanamaki [--runner_config config.json ]
   """
-  val logger = LoggerFactory.getLogger("Hanamaki")
+  val logger: Logger = LoggerFactory.getLogger("Hanamaki")
 
   def main(args: Array[String]): Unit = {
-    logger.info("start validate")
+    logger.info("start hanamaki")
 
     val enumeration = NetworkInterface.getNetworkInterfaces.asScala.toSeq
     val ipAddresses = enumeration.flatMap(p =>
@@ -36,7 +33,7 @@ object Hanamaki {
     }.getOrElse(InetAddress.getLocalHost)
     logger.info("-----------------" + address)
     if (args.length == 0) println(usage)
-    val arglist = args.toList
+    val tblBuilder = Array.newBuilder[String]
     type OptionMap = Map[Symbol, Any]
 
     @tailrec
@@ -45,34 +42,29 @@ object Hanamaki {
 
       list match {
         case Nil => map
-        case "--rule" :: value :: tail =>
-          nextOption(map ++ Map('rule -> value), tail)
-        case "--source" :: value :: tail =>
-          nextOption(map ++ Map('source -> value), tail)
-        case "--sink" :: value :: tail =>
-          nextOption(map ++ Map('sink -> value), tail)
-        case string :: Nil => nextOption(map ++ Map('rule -> string), list.tail)
+        case "--runner_config" :: value :: tail =>
+          nextOption(map ++ Map('runner_config -> value), tail)
+        case string :: opt2 :: tail if isSwitch(string) =>
+          tblBuilder += string
+          nextOption(map ++ Map(Symbol(string.dropWhile(_ == '-')) -> opt2), tail)
         case option :: tail => println("Unknown option " + option)
           exit(1)
       }
     }
 
-    val options = nextOption(Map(), arglist)
+    val options = nextOption(Map(), args.toList)
+    InputPool.inputMap = Some(options)
     logger.info(options.toString())
-    val sourcePath = options.getOrElse('source, "D:\\dev\\cat\\flink-hanamaki\\config\\source.json").toString
-    val sinkPath = options.getOrElse('sink, "D:\\dev\\cat\\flink-hanamaki\\config\\sink.json").toString
-    val rulePath = options.getOrElse('rule, "D:\\dev\\cat\\flink-hanamaki\\config\\custom_event_rule.json").toString
+    val path = options('runner_config).toString
+    val jsonNode = JsonReader.readFromFile(path)
+    val settings = EnvironmentSettings.newInstance().useBlinkPlanner().build()
     val env = StreamExecutionEnvironment.getExecutionEnvironment
-    env.setParallelism(3)
-    env.getConfig.registerTypeWithKryoSerializer(classOf[EventDto], classOf[ProtobufSerializer])
-    val source = KafkaSourceFactory.genSourceCustomEvent(sourcePath, env)
-    val rule = RuleFactory.generateRule("customEvent", rulePath)
-    val sink = KafkaSinkFactory.genSourceCustomEvent(sinkPath)
-    source.map { x => {
-      rule.validate(x)
-        .mkString
-    }
-    }.addSink(sink)
+    val tEnv = StreamTableEnvironment.create(env, settings)
+    val catEnv = CatEnv.builder()
+      .arg(options)
+      .build(tEnv, env)
+    catEnv.addRunner(jsonNode)
+    catEnv.run()
     env.execute("huajuan")
   }
 }

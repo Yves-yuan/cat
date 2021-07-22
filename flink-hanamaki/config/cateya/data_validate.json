@@ -1,0 +1,35 @@
+{
+  "runners": [
+    {
+      "type": "gio_event_source",
+      "topic": "event",
+      "bootstrapServer": "111",
+      "delaySecond": "9223372036854775807",
+      "sink": "tmp1",
+      "bounded": "true"
+    },
+    {
+      "type": "custom_query_sql",
+      "sql": "select project_key,`attrs`['key1'] as key1,`attrs`['key2'] as key2 from tmp1",
+      "sink": "tmp2"
+    },
+    {
+      "type": "custom_execute_sql",
+      "sql": "create table sink1(`key1` String,`key2` String) with ('connector'='kafka','properties.bootstrap.servers' = '192.168.1.85:9092,192.168.1.86:9092','topic' = 'event_sink','format' = 'csv')"
+    },
+    {
+      "type": "hive_connect",
+      "catalogName": "huajuan_hive",
+      "defaultDatabase": "meta",
+      "hiveConfDir": "file:///path/to/hive/conf"
+    },
+    {
+      "type": "custom_execute_sql",
+      "sql": "truncate table if exists meta.data_validate"
+    },
+    {
+      "type": "custom_execute_sql",
+      "sql": "insert into meta.data_validate select key1,key2 from tmp2"
+    }
+  ]
+}

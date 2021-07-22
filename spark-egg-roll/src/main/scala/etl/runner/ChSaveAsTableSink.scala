@@ -6,9 +6,20 @@ import org.apache.spark.sql.SaveMode
 import java.sql.DriverManager
 import java.util.Properties
 import scala.collection.mutable
+import scala.util.{Failure, Success, Try}
 
 
 class ChSaveAsTableSink(sinkConfig: mutable.HashMap[String, String]) extends Runner {
+  val typeMapper = Map(
+    ("Short", "Int16"),
+    ("Long", "Int64"),
+    ("Integer", "Int32"),
+    ("Timestamp", "String"),
+    ("Date", "String"),
+    ("Float", "Float32"),
+    ("Double", "Float64")
+  )
+
   override def run(env: CatEnv): Unit = {
     val sql = sinkConfig.get("sql") match {
       case Some(from) => from
@@ -19,14 +30,8 @@ class ChSaveAsTableSink(sinkConfig: mutable.HashMap[String, String]) extends Run
       case Some(name) => name
       case None => throw new Exception("Ch table name must be assigned")
     }
-    val columnsSqlBuilder = scala.collection.mutable.ArrayBuilder.make[String]()
-    df.schema.foreach(sf => {
-      val typeOri = sf.dataType.typeName
-      val chType = typeOri.charAt(0).toUpper + typeOri.substring(1, typeOri.length)
-      columnsSqlBuilder += s"${sf.name} ${chType}"
-    })
-    val columns = columnsSqlBuilder.result().mkString(",")
-    val engine = env.args.getOrElse('engine, "MergeTree")
+
+    val engine = env.args.getOrElse('engine, "MergeTree()")
     val orderByKey = sinkConfig.get("order_by") match {
       case Some(key) => Some(key)
       case None => env.args.get('order_by) match {
@@ -41,6 +46,22 @@ class ChSaveAsTableSink(sinkConfig: mutable.HashMap[String, String]) extends Run
         case None => None
       }
     }
+    val columnsSqlBuilder = scala.collection.mutable.ArrayBuilder.make[String]()
+    df.schema.foreach(sf => {
+      val typeOri = sf.dataType.typeName
+      var chType = typeOri.charAt(0).toUpper + typeOri.substring(1, typeOri.length)
+      if (typeMapper.contains(chType)) {
+        if(sf.name != "birthday"){
+          chType = typeMapper(chType)
+        }
+      }
+      if (df.schema.head.name == sf.name || (partitionByKey.isDefined && partitionByKey.get == sf.name)) {
+        columnsSqlBuilder += s"${sf.name} ${chType} "
+      } else {
+        columnsSqlBuilder += s"${sf.name} ${chType} NULL"
+      }
+    })
+    val columns = columnsSqlBuilder.result().mkString(",")
     val ddl =
       s"""
          |create table if not exists $chTableName
@@ -48,11 +69,9 @@ class ChSaveAsTableSink(sinkConfig: mutable.HashMap[String, String]) extends Run
          | $columns
          |)
          |ENGINE = $engine
-         |""".stripMargin + orderByKey.flatMap(x => {
-        Some(
-          s"""ORDER BY $x
-             |""".stripMargin)
-      }).getOrElse("") + partitionByKey.flatMap(x => {
+         |""".stripMargin +
+        s"""ORDER BY ${df.schema.fieldNames(0)}
+           |""".stripMargin + partitionByKey.flatMap(x => {
         Some(
           s"""PARTITION BY $x
              |""".stripMargin)
@@ -88,10 +107,17 @@ class ChSaveAsTableSink(sinkConfig: mutable.HashMap[String, String]) extends Run
     }
     val conn = DriverManager.getConnection(url, user, password)
     val stmt = conn.createStatement()
-    println(s"执行 $cdDdl")
-    stmt.execute(cdDdl)
-    println(s"执行 $ddl")
-    stmt.execute(ddl)
+    Try {
+      println(s"执行 $cdDdl")
+      stmt.execute(cdDdl)
+      println(s"执行 $ddl")
+      stmt.execute(ddl)
+    } match {
+      case Success(x) => println("执行成功")
+      case Failure(e) =>
+        println("执行失败")
+        e.printStackTrace()
+    }
     val prop = new Properties()
     val ckDriver = "ru.yandex.clickhouse.ClickHouseDriver"
     prop.put("driver", ckDriver)
@@ -105,7 +131,8 @@ class ChSaveAsTableSink(sinkConfig: mutable.HashMap[String, String]) extends Run
     prop.put("socket_timeout", "300000")
     df
       .write
-      .mode(SaveMode.Append)
+      .mode("append")
+      .format("jdbc")
       .jdbc(url, chTableName, prop)
   }
 }
