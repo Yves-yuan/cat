@@ -32,6 +32,17 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
   }
 
   private def createRunner(json: JsonNode): Runner = {
+    val config = new scala.collection.mutable.HashMap[String, String]()
+    val fs = json.fields()
+    while (fs.hasNext) {
+      val n = fs.next()
+      val v = n.getValue.asText()
+      val parsedValue = argsParser.parse(v)
+      config.put(n.getKey, parsedValue)
+    }
+    config.foreach(x => {
+      validateArgs(x._2)
+    })
     val typ = json.get("type").asText()
     typ match {
       case "union" => createUnion(json)
@@ -46,6 +57,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       case "repartition" => createRepartition(json)
       case "parquet_source" => createParquet(json)
       case "ch_save_table_sink" => createChSaveAsTableSink(json)
+      case "phoenix_source" => new PhoenixSource(config)
       case x => throw new Exception(s"runner type $x not supported now")
     }
   }
