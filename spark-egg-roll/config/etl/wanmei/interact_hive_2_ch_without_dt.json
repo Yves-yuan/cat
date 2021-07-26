@@ -1,0 +1,12 @@
+{
+  "runners": [
+    {
+      "type": "ch_save_table_sink",
+      "sql": "select * from import.rec_output_20210723",
+      "name": "$name",
+      "url": "jdbc:clickhouse://ip-172-20-37-44.cn-northwest-1.compute.internal:8123",
+      "user": "root",
+      "password": "3v48ru8u2heuq4qr"
+    }
+  ]
+}
