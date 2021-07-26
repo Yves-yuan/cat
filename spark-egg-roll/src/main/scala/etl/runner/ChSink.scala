@@ -15,14 +15,8 @@ class ChSink(sinkConfig: mutable.HashMap[String, String]) extends Runner {
       case Some(from) => from
       case None => throw new Exception("from must be assigned")
     }
-    val from_dt = env.args.get('from_dt) match {
-      case Some(d) => d
-      case None => throw new Exception("from_dt must be assigned by --from_dt")
-    }
-    val to_dt = env.args.get('to_dt) match {
-      case Some(d) => d
-      case None => throw new Exception("to_dt must be assigned by --to_dt")
-    }
+    val from_dt = env.args.get('from_dt)
+    val to_dt = env.args.get('to_dt)
     println(from)
     val df = env.spark.sql(from)
 
@@ -31,7 +25,7 @@ class ChSink(sinkConfig: mutable.HashMap[String, String]) extends Runner {
       case None => throw new Exception("Ch table name must be assigned")
     }
     val engine = sinkConfig.getOrElse("engine", "MergeTree")
-    val partitionKey = sinkConfig.getOrElse("partition_key", "dt")
+    val partitionKey = sinkConfig.get("partition_key")
     val orderByKey = sinkConfig.get("order_by") match {
       case Some(key) => key
       case None => throw new Exception("Ch order_by key must be assigned")
@@ -45,15 +39,18 @@ class ChSink(sinkConfig: mutable.HashMap[String, String]) extends Runner {
     val columns = columnsSqlBuilder.result().mkString(",")
     val ddl =
       s"""
-                 |create table if not exists $chTableName
-                 |(
-                 | $columns
-                 |)
-                 |ENGINE = $engine
-                 |PARTITION BY $partitionKey
-                 |ORDER BY $orderByKey
-                 |
-                 |""".stripMargin
+         |create table if not exists $chTableName
+         |(
+         | $columns
+         |)
+         |ENGINE = $engine
+         |ORDER BY $orderByKey
+         |
+         |""".stripMargin + partitionKey.flatMap(x => {
+        Some(s"""
+           | PARTITION BY $partitionKey
+           |""".stripMargin)
+      }).getOrElse("")
     val dbTable = chTableName.split('.')
     if (dbTable.length != 2) {
       throw new Exception(s"db and table must be assigned in name but got $chTableName")
@@ -90,18 +87,20 @@ class ChSink(sinkConfig: mutable.HashMap[String, String]) extends Runner {
     println(s"执行 $ddl")
     stmt.execute(ddl)
     val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-    val fromDt = LocalDate.parse(from_dt.toString,formatter)
-    val toDt = LocalDate.parse(to_dt.toString,formatter)
-    var iteratorDt = fromDt
-    while(!iteratorDt.isAfter(toDt)){
-      val iDt = iteratorDt.format(formatter)
-      val dmlDropPartition =
-        s"""
-           |alter table $chTableName drop partition '$iDt'
-           |""".stripMargin
-      println(s"执行 $dmlDropPartition")
-      stmt.execute(dmlDropPartition)
-      iteratorDt = iteratorDt.plusDays(1)
+    if (from_dt.isDefined && to_dt.isDefined){
+      val fromDt = LocalDate.parse(from_dt.toString, formatter)
+      val toDt = LocalDate.parse(to_dt.toString, formatter)
+      var iteratorDt = fromDt
+      while (!iteratorDt.isAfter(toDt)) {
+        val iDt = iteratorDt.format(formatter)
+        val dmlDropPartition =
+          s"""
+             |alter table $chTableName drop partition '$iDt'
+             |""".stripMargin
+        println(s"执行 $dmlDropPartition")
+        stmt.execute(dmlDropPartition)
+        iteratorDt = iteratorDt.plusDays(1)
+      }
     }
     stmt.close()
     conn.commit()

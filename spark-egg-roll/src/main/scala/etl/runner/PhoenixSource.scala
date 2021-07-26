@@ -20,7 +20,7 @@ class PhoenixSource(jsonConfig: mutable.HashMap[String, String]) extends Runner 
     }
     val df = env.spark.read
       .format("phoenix")
-      .options(Map("table" -> table, PhoenixDataSource.ZOOKEEPER_URL -> zk))
+      .options(Map("table" -> table, "zookeeper" -> zk))
       .load()
     df.createOrReplaceTempView(sink)
   }
