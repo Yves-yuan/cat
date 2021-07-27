@@ -48,7 +48,7 @@ class ChSink(sinkConfig: mutable.HashMap[String, String]) extends Runner {
          |
          |""".stripMargin + partitionKey.flatMap(x => {
         Some(s"""
-           | PARTITION BY $partitionKey
+           | PARTITION BY $x
            |""".stripMargin)
       }).getOrElse("")
     val dbTable = chTableName.split('.')

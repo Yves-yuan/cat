@@ -40,9 +40,14 @@ object EtlRunnerGo {
     println(options)
     val path = options('runner_config).toString
     val jsonNode = JsonReader.readFromFile(path)
-    val spark = SparkSession.builder()
-      .enableHiveSupport()
-      .getOrCreate()
+    val spark = if (options.contains('mode) && options('mode).toString == "local") {
+      SparkSession.builder().master("local")
+        .getOrCreate()
+    } else {
+      SparkSession.builder()
+        .enableHiveSupport()
+        .getOrCreate()
+    }
     val catEnv = CatEnv.builder()
       .arg(options)
       .build(spark)
