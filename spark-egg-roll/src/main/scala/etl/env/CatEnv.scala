@@ -58,6 +58,8 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       case "parquet_source" => createParquet(json)
       case "ch_save_table_sink" => createChSaveAsTableSink(json)
       case "phoenix_source" => new PhoenixSource(config)
+      case "csv_source" => new CsvSource(config)
+      case "json_sink" => new JsonSink(config)
       case x => throw new Exception(s"runner type $x not supported now")
     }
   }
@@ -121,6 +123,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
     })
     new ChSink(config)
   }
+
   private def createChSaveAsTableSink(json: JsonNode): Runner = {
     val config = new scala.collection.mutable.HashMap[String, String]()
     val fs = json.fields()
@@ -135,6 +138,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
     })
     new ChSaveAsTableSink(config)
   }
+
   private def createParquet(json: JsonNode): Runner = {
     val config = new scala.collection.mutable.HashMap[String, String]()
     val fs = json.fields()
@@ -179,6 +183,7 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
     })
     new CreateTableFromDfWithoutDt(jsonConfig)
   }
+
   private def createCreateTableFromDf(json: JsonNode): Runner = {
     val jsonConfig = new scala.collection.mutable.HashMap[String, String]()
     val fs = json.fields()

@@ -1,0 +1,15 @@
+{
+  "runners": [
+    {
+      "type": "csv_source",
+      "path": "file:///root/yuanyifei/test/data.csv",
+      "sink": "tmp1"
+    },
+    {
+      "type": "json_sink",
+      "sql": "select *,map('_c0',_c0,'_c1',_c1) from tmp1",
+      "sink": "file:///root/yuanyifei/test/data.json",
+      "mode": "overwrite"
+    }
+  ]
+}

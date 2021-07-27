@@ -45,7 +45,6 @@ class ChSink(sinkConfig: mutable.HashMap[String, String]) extends Runner {
          |)
          |ENGINE = $engine
          |ORDER BY $orderByKey
-         |
          |""".stripMargin + partitionKey.flatMap(x => {
         Some(s"""
            | PARTITION BY $x
@@ -88,8 +87,8 @@ class ChSink(sinkConfig: mutable.HashMap[String, String]) extends Runner {
     stmt.execute(ddl)
     val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
     if (from_dt.isDefined && to_dt.isDefined){
-      val fromDt = LocalDate.parse(from_dt.toString, formatter)
-      val toDt = LocalDate.parse(to_dt.toString, formatter)
+      val fromDt = LocalDate.parse(from_dt.get.toString, formatter)
+      val toDt = LocalDate.parse(to_dt.get.toString, formatter)
       var iteratorDt = fromDt
       while (!iteratorDt.isAfter(toDt)) {
         val iDt = iteratorDt.format(formatter)
