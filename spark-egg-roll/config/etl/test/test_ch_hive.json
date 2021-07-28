@@ -1,0 +1,22 @@
+{
+  "runners": [
+    {
+      "type": "ch_source",
+      "table": "(select * from $ch_table where dt='$dt') as src",
+      "url": "jdbc:clickhouse://10.6.8.39:8123",
+      "user": "root",
+      "password": "7rgbbg93lt67s3sn",
+      "sink": "tmp1"
+    },
+    {
+      "type": "create_table_from_df_without_dt",
+      "sql": "select * from tmp1 ",
+      "table":"test.table"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "insert overwrite table test.table  select * from tmp1",
+      "sink": "null"
+    }
+  ]
+}
