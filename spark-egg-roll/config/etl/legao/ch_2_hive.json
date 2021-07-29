@@ -1,0 +1,29 @@
+{
+  "runners": [
+    {
+      "type": "ch_source",
+      "table": "(select * from $ch_table where pt='$dt') as src",
+      "url": "jdbc:clickhouse://ip-172-20-37-44.cn-northwest-1.compute.internal:8123",
+      "user": "root",
+      "password": "3v48ru8u2heuq4qr",
+      "sink": "tmp1"
+    },
+    {
+      "type": "ddl_create_table_from_df",
+      "sql": "select * from tmp1",
+      "table": "$hive_table",
+      "partition_key": "dt"
+    },
+    {
+      "type": "repartition",
+      "sql": "select * from tmp1",
+      "partition_key": "",
+      "sink": "tmp2"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "insert overwrite table $hive_table partition(dt=$dt) select * from tmp2",
+      "sink": "null"
+    }
+  ]
+}

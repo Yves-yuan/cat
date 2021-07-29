@@ -51,7 +51,12 @@ class ChSaveAsTableSink(sinkConfig: mutable.HashMap[String, String]) extends Run
       val typeOri = sf.dataType.typeName
       var chType = typeOri.charAt(0).toUpper + typeOri.substring(1, typeOri.length)
       if (typeMapper.contains(chType)) {
-        if(sf.name != "birthday"){
+        // 时间戳类型只转换birthday
+        if(chType == "Timestamp" || chType == "Date"){
+          if(sf.name == "birthday"){
+            chType = typeMapper(chType)
+          }
+        }else{
           chType = typeMapper(chType)
         }
       }

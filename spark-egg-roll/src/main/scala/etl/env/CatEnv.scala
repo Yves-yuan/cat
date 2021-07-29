@@ -56,10 +56,12 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       case "ddl_create_table_from_df_without_dt" => createCreateTableFromDfWithoutDt(json)
       case "repartition" => createRepartition(json)
       case "parquet_source" => createParquet(json)
+      case "parquet_sink" => new ParquetSink(config)
       case "ch_save_table_sink" => createChSaveAsTableSink(json)
       case "phoenix_source" => new PhoenixSource(config)
       case "csv_source" => new CsvSource(config)
       case "json_sink" => new JsonSink(config)
+      case "hdfs_sink" => new HdfsSink(config)
       case x => throw new Exception(s"runner type $x not supported now")
     }
   }
