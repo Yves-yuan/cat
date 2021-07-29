@@ -1,0 +1,41 @@
+{
+  "runners": [
+
+    {
+      "type": "column_cast",
+      "source": "select * from ods.wechat_mall_event_history",
+      "columns":"datetime,message_times",
+      "cast_type":"timestamp",
+      "sink":"tmp_1"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "select row_number() over (partition by event,appid,datetime,distinct_id order by datetime desc) as row_number,* from tmp_1",
+      "sink": "tmp_2"
+    },
+    {
+      "type": "drop_column",
+      "sql": "select * from tmp_2 where row_number=1 and event is not null",
+      "drop_columns": [
+        "row_number"
+      ],
+      "sink": "tmp_3"
+    },
+    {
+      "type": "ddl_create_table_from_df",
+      "sql": "select * from tmp_3",
+      "table": "dwd.dwd_wechat_mall_event_history"
+    },
+    {
+      "type": "repartition",
+      "sql": "select *,partition_col as dt from tmp_3",
+      "partition_key": "dt",
+      "sink": "tmp_4"
+    },
+    {
+      "type": "custom_sql",
+      "sql": "insert overwrite table dwd.dwd_wechat_mall_event_history partition(dt) select * from tmp_4",
+      "sink": "null"
+    }
+  ]
+}
