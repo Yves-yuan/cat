@@ -1,0 +1,26 @@
+{
+  "runners": [
+    {
+      "type": "ch_source",
+      "table": "(select * from $ch_table where pt='$dt') as src",
+      "url": "jdbc:clickhouse://ip-172-20-37-44.cn-northwest-1.compute.internal:8123",
+      "user": "root",
+      "password": "3v48ru8u2heuq4qr",
+      "sink": "tmp1"
+    },
+    {
+      "type": "table_row_number",
+      "sql": "select * from tmp1",
+      "table": "$ch_table",
+      "sink": "tmp2"
+    },
+    {
+      "type": "ch_save_table_sink",
+      "sql": "select *,'$dt' as dt from tmp2",
+      "name": "$validate_result_table",
+      "url": "jdbc:clickhouse://ip-172-20-37-44.cn-northwest-1.compute.internal:8123",
+      "user": "root",
+      "password": "3v48ru8u2heuq4qr"
+    }
+  ]
+}

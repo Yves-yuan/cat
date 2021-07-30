@@ -3,6 +3,7 @@ package etl.env
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.{ArrayNode, TextNode}
 import etl.runner._
+import etl.runner.validate.{Completeness, TableRowNumber, Uniqueness}
 import org.apache.spark.sql.SparkSession
 import sql.ArgsParser
 
@@ -62,6 +63,9 @@ case class CatEnv(spark: SparkSession, args: Map[Symbol, Any], settings: Map[Str
       case "csv_source" => new CsvSource(config)
       case "json_sink" => new JsonSink(config)
       case "hdfs_sink" => new HdfsSink(config)
+      case "table_row_number" => new TableRowNumber(config)
+      case "completeness" => new Completeness(config)
+      case "uniqueness" => new Uniqueness(config)
       case x => throw new Exception(s"runner type $x not supported now")
     }
   }
