@@ -9,7 +9,7 @@ import scala.sys.exit
 object TableRowNumber {
   val usage =
     """
-    Usage: TableRowNumber [--dt '20210610' --savepath '/home/yuanyifei' tbl1 tbl2]
+    Usage: TableRowNumber [--dt '20210610' tbl1 tbl2]
   """
 
   def main(input: Array[String]): Unit = {

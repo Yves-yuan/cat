@@ -9,7 +9,7 @@ import scala.sys.exit
 object Completeness {
   val usage =
     """
-    Usage: Completeness [--dt '20210610' --savepath '/home/yuanyifei' tbl1 tbl2]
+    Usage: Completeness [--dt '20210610'  tbl1 tbl2]
   """
 
   def main(input: Array[String]): Unit = {
