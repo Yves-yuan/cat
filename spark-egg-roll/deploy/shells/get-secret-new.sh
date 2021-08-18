@@ -1,0 +1,1 @@
+/usr/local/bin/aws secretsmanager get-secret-value --secret-id gio_lego_secret | grep -E ".*ch_password.*" | sed -r "s/.*ch_password\\\\\":\\\\\"(.*)\\\\.*/\1/"
