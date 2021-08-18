@@ -6,28 +6,19 @@ build:
   tags:
     - shell
   script:
-    - "cd batch"
+    - "cd spark-egg-roll"
     - "mvn package -DpackageName=gio-dc-batch-$CI_COMMIT_BRANCH-$CI_JOB_ID-$CI_COMMIT_SHORT_SHA -Passembly -DskipTests=true"
-    - "cd ../loadCDP"
-    - "mvn package -DpackageName=gio-dc-loadcdp-$CI_COMMIT_BRANCH-$CI_JOB_ID-$CI_COMMIT_SHORT_SHA -Passembly -DskipTests=true"
-    - "cd ../airflow"
-    - "sh package.sh gio-dc-airflow-$CI_COMMIT_BRANCH-$CI_JOB_ID-$CI_COMMIT_SHORT_SHA"
     - "cd .."
     - "mkdir dist"
     - "mkdir dist/batch"
-    - "mkdir dist/loadcdp"
     - "mkdir dist/airflow"
     - "mkdir dist/sql"
-    - "tar -zxvf batch/spark/target/gio-dc-batch-$CI_COMMIT_BRANCH-$CI_JOB_ID-$CI_COMMIT_SHORT_SHA.tar.gz -C dist/batch --strip-components 1"
-    - "tar -zxvf loadCDP/target/gio-dc-loadcdp-$CI_COMMIT_BRANCH-$CI_JOB_ID-$CI_COMMIT_SHORT_SHA.tar.gz -C dist/loadcdp --strip-components 1"
-    - "tar -zxvf airflow/gio-dc-airflow-$CI_COMMIT_BRANCH-$CI_JOB_ID-$CI_COMMIT_SHORT_SHA.tar.gz -C dist/airflow"
-    - "cp -r sql-shell/* dist/sql/"
+    - "cp -r sql/* dist/sql/"
+    - "cp -r airflow/* dist/airflow/"
     - "cp -r init dist/"
     - "cp cdp.yml dist/"
     - "mv dist gio-dc-etl-$CI_COMMIT_BRANCH-$CI_JOB_ID-$CI_COMMIT_SHORT_SHA"
-    - "cd gio-dc-etl-$CI_COMMIT_BRANCH-$CI_JOB_ID-$CI_COMMIT_SHORT_SHA"
-    - "tar -zcvf ../gio-dc-etl-$CI_COMMIT_BRANCH-$CI_JOB_ID-$CI_COMMIT_SHORT_SHA.tar.gz *"
-    - "cd .."
+    - "tar -zcvf gio-dc-etl-$CI_COMMIT_BRANCH-$CI_JOB_ID-$CI_COMMIT_SHORT_SHA.tar.gz gio-dc-etl-$CI_COMMIT_BRANCH-$CI_JOB_ID-$CI_COMMIT_SHORT_SHA"
     - "/usr/local/bin/aws s3 cp gio-dc-etl-$CI_COMMIT_BRANCH-$CI_JOB_ID-$CI_COMMIT_SHORT_SHA.tar.gz s3://growingio-cdp-packages/snapshot/gio-dc-etl/$CI_COMMIT_BRANCH/"
 
 
