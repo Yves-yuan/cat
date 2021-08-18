@@ -1,0 +1,59 @@
+app: gio-dc-etl
+units:
+  - name: deploy
+    mode: script
+    command: "{{ app_deploy_dir }}/init/init.sh"
+
+
+configs:
+  - path: init/init.sh.tpl
+  - path: batch/config/ch_2_emr_hdfs.json.tpl
+  - path: batch/config/ch_2_hive.json.tpl
+  - path: batch/config/metadata.json.tpl
+  - path: batch/config/parquet_2_ch.json.tpl
+  - path: batch/shells/ch-drop-partition.sh.tpl
+  - path: batch/shells/down-file.sh.tpl
+  - path: batch/shells/submit-ch-2-emr-hdfs.sh.tpl
+  - path: batch/shells/submit-ch-2-hive.sh.tpl
+  - path: batch/shells/submit-metadata.sh.tpl
+  - path: batch/shells/submit-parquet-2-ch.sh.tpl
+  - path: batch/shells/check-file-md5.sh.tpl
+  - path: batch/shells/batch-load-ods.sh.tpl
+  - path: airflow/shells/batch_add_task.sh.tpl
+  - path: airflow/shells/down_load_temp.tpl
+  - path: airflow/shells/dwd_dim_dws_dag.py.tpl
+  - path: airflow/shells/metadata.py.tpl
+  - path: airflow/shells/batch_down_load.py.tpl
+  - path: airflow/shells/batch_ch_2_hive.py.tpl
+  - path: airflow/shells/load_cdp.py.tpl
+  - path: sql/dwd_sales_order_main_flow.sh.tpl
+  - path: sql/dwd_sales_order_detail_flow.sh.tpl
+  - path: sql/dwd_sales_order_return_main.sh.tpl
+  - path: sql/dwd_sales_order_return_detail.sh.tpl
+  - path: sql/dim_campaign_info.sh.tpl
+  - path: sql/dwd_campaign_part_in.sh.tpl
+  - path: sql/dim_agreement_coupon_info.sh.tpl
+  - path: sql/dwd_agreement_coupon_ver.sh.tpl
+  - path: sql/dwd_agreement_point_order.sh.tpl
+  - path: sql/dwd_agreement_user_sign.sh.tpl
+  - path: sql/dim_party_user.sh.tpl
+  - path: sql/dim_party_user_all.sh.tpl
+  - path: sql/dim_party_shop.sh.tpl
+  - path: sql/dim_party_number_kid.sh.tpl
+  - path: sql/dim_item_sku.sh.tpl
+  - path: sql/dws_channel_sales_main.sh.tpl
+  - path: sql/dws_channel_sales_item.sh.tpl
+  - path: sql/event.sh.tpl
+  - path: sql/user.sh.tpl
+  - path: sql/dwd_user_collect.sh.tpl
+  - path: loadcdp/shells/load.sh.tpl
+  - path: loadcdp/shells/eventToCh.sh.tpl
+  - path: loadcdp/shells/loadUser.sh.tpl
+  - path: loadcdp/shells/userToCh.sh.tpl
+  - path: loadcdp/shells/dec.sh.tpl
+  - path: loadcdp/shells/eventDec.sh.tpl
+  - path: loadcdp/shells/event-start.sh.tpl
+  - path: loadcdp/shells/user-start.sh.tpl
+#custom_configs:
+#  - name: lego_data_bucket
+#    default: ppd-cdm-data-mart
